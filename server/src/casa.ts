@@ -1,6 +1,14 @@
-import { Casa } from '../entidades/casa';
 import { model, Schema } from 'mongoose';
 //npm add mongoose
+
+export interface Casa {
+    local:      string;
+    cidade:     string;
+    quartos:    number;
+    camas:      number;
+    banheiros:  number;
+    hospedes:   number;
+}
 
 const CasaSchema = new Schema<Casa>({
     local:      {type: String, required: true},
