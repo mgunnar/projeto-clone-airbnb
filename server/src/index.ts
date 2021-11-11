@@ -77,23 +77,80 @@ async function main(){
          });
          
        
-         app.get("/readLocal/", async (req, res)=>{
-            CasaModel.find({}, (err, result)=>{
+         app.get("/readLocal/:search", async (req, res)=>{
+            const  search = req.params.search;
+            CasaModel.find({local: search}).exec( (err, result)=>{
                 if(err){
                   res.send(err);
                 }
                 res.send(result);
-            });
-                   
-            /*
-            export function getAloComParametro(req: Request, res: Response) {
-            const nome = req.params.nome;
-                res.send(`Alô, ${nome}!`);
-            }
-            
-            
-            */
-         console.log('GetTodos!');
+            });                   
+         console.log('GetTodos Local!');
+         console.log(Result);
+         });
+        
+         app.get("/readCidade/:search", async (req, res)=>{
+            const  search = req.params.search;
+            CasaModel.find({cidade: search}).exec( (err, result)=>{
+                if(err){
+                  res.send(err);
+                }
+                res.send(result);
+            });                   
+         console.log('Get por cidade!');
+         console.log(Result);
+         });
+        
+
+         app.get("/readQuartos/:search", async (req, res)=>{
+            const  search = req.params.search;
+            CasaModel.find({quartos: parseInt(search)}).exec( (err, result)=>{
+                if(err){
+                  res.send(err);
+                }
+                res.send(result);
+            });                   
+         console.log('Get por quartos!');
+         console.log(Result);
+         });
+        
+
+
+         app.get("/readCamas/:search", async (req, res)=>{
+            const  search = req.params.search;
+            CasaModel.find({camas: parseInt(search)}).exec( (err, result)=>{
+                if(err){
+                  res.send(err);
+                }
+                res.send(result);
+            });                   
+         console.log('Get por camas!');
+         console.log(Result);
+         });
+        
+
+         app.get("/readBanheiros/:search", async (req, res)=>{
+            const  search = req.params.search;
+            CasaModel.find({banheiros: parseInt(search)}).exec( (err, result)=>{
+                if(err){
+                  res.send(err);
+                }
+                res.send(result);
+            });                   
+         console.log('Get por banheiros!');
+         console.log(Result);
+         });
+        
+
+         app.get("/readHospedes/:search", async (req, res)=>{
+            const  search = req.params.search;
+            CasaModel.find({hospedes: parseInt(search)}).exec( (err, result)=>{
+                if(err){
+                  res.send(err);
+                }
+                res.send(result);
+            });                   
+         console.log('Get por hospedes!');
          console.log(Result);
          });
         
