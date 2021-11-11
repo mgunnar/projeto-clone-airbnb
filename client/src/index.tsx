@@ -7,6 +7,9 @@ import App from './App';
 import PaginaNaoEcontrada from './PaginaNaoEcontrada';
 import PaginaPrincipal from './PaginaPrincipal';
 import PaginaOfertas from './PaginaOfertas';
+import PaginaReserva from './PaginaReserva';
+import PaginaCadastro from './PaginaCadastro';
+import PaginaDetalheOferta from './PaginaDetalheOferta';
 import PaginaSobre from './PaginaSobre';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -19,6 +22,9 @@ ReactDOM.render(
           <Route index element={<PaginaPrincipal />}/>
           <Route path="ofertas" element={<PaginaOfertas />}>
                      </Route>
+          <Route path="reserva" element={<PaginaReserva />} />
+          <Route path="cadastro" element={<PaginaCadastro />} />
+          <Route path="detalhe" element={<PaginaDetalheOferta />} />
           <Route path="sobre" element={<PaginaSobre />} />
           <Route path="*" element={<PaginaNaoEcontrada />} />
         </Route>

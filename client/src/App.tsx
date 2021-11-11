@@ -14,6 +14,8 @@ export default function App() {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link as={NavLink} to="/ofertas">Ofertas</Nav.Link>
+            <Nav.Link as={NavLink} to="/reserva">Reserva</Nav.Link>
+            <Nav.Link as={NavLink} to="/cadastro">Cadastro</Nav.Link>
             <Nav.Link as={NavLink} to="/sobre">Sobre</Nav.Link>
           </Nav>
         </Navbar.Collapse>
@@ -28,7 +30,7 @@ export default function App() {
       <main>
         <Outlet />
       </main>
-      <footer>
+      <footer className="footer navbar-fixed-bottom">
         <p>Desenvolvido por Fabio J. C. Batista e Matheus G. M. da Silva</p>
       </footer>
     </>
