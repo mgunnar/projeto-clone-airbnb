@@ -16,10 +16,10 @@ export default function PaginaOfertas() {
   const [banheiros, setBanheiros] = useState(0);
   const [hospedes, setHospedes] = useState(0);
 
-  const [radio, setRadio] = useState(' ');
+  const [radio, setRadio] = useState('');
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState(false);
-  const [url, setUrl] = useState('http://localhost:3000/readLocal/');
+  const [url, setUrl] = useState('http://localhost:3000/readCasa/');
 
   
   
@@ -73,7 +73,7 @@ export default function PaginaOfertas() {
 
         switch(radio){
           case 'Local':
-            setUrl(`http://localhost:3000/readLocal/`);
+            setUrl(`http://localhost:3000/readCasa/`);
           break;
           case 'Cidade':
             setUrl(`http://localhost:3000/readCidade/`);
@@ -91,7 +91,7 @@ export default function PaginaOfertas() {
             setUrl(`http://localhost:3000/readHospedes/`);
           break;
           default:
-            setUrl(`http://localhost:3000/readLocal/`);
+            setUrl(`http://localhost:3000/readCasa/`);
 
         }
         event.preventDefault();
