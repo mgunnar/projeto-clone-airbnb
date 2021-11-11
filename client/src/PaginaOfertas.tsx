@@ -230,6 +230,7 @@ export default function PaginaOfertas() {
        <div className="row">
         
       {dados.map((dados: Casa) =>{
+      const link=`/detalhe?pageId=${dados.id}`;
       return (
       
       <div className="col">
@@ -238,7 +239,7 @@ export default function PaginaOfertas() {
               <h5 className="card-title">{dados.local}</h5>
               <h6 className="card-subtitle mb-2 text-muted">{dados.cidade}</h6>
               <p className="card-text">
-               <a href="#" className="card-link"><img src={dados.local} width="270px" height="220px"/></a>
+               <a href={link} className="card-link"><img src={dados.local} width="270px" height="220px"/></a>
               </p>
             </div>
           </div>

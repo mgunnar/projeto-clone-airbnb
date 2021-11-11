@@ -9,8 +9,7 @@
 }
 
 .container{
-  margin-left: auto;
-  margin-right: auto;
+  align-items: center;
   border-radius: 50%;
 }
 
@@ -31,11 +30,11 @@
   font-family: monospace;
 }
 
-
-.card-title{
-  background-color: #555;
-  color: white;
+.card-caption{
+  
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
+
 
 
 footer
@@ -87,8 +86,23 @@ nav{
 main{
   margin-top: 5px;
   padding-top: 50px;
-  margin-bottom: 10px;
+  margin-bottom: 100px;
   
+}
+
+.leftPosition{
+  display: inline-block;
+  text-align: left;
+  padding: 10px;
+        
+}
+
+.rightPosition{
+  
+ display: inline-block;
+ text-align: left;
+ padding: 10px;
+ float: auto;
 }
 
 .App-logo {

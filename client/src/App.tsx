@@ -6,8 +6,6 @@ import { NavLink, Outlet} from 'react-router-dom';
 export default function App() {
   return (
     <>
-
-    
       <Navbar bg="light" expand="lg">
         <Navbar.Brand as={NavLink} to="/">Desafio</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -22,10 +20,6 @@ export default function App() {
       </Navbar>
       <header>
         
-
-             
-
-
       </header>
       <main>
         <Outlet />
