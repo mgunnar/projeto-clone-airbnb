@@ -1,45 +1,54 @@
 import React, {useState, useEffect} from 'react';
-import './App.css';
 import Axios from "axios";
+import './App.css';
+import {Casa} from './dtos';
+
 
 export default function PaginaOfertas() {
-    const imgs: string = "https://imoveisvaledosinos.com.br/wp-content/uploads/mercado-publico.jpg";
-    
+  //const imgs: string = "https://imoveisvaledosinos.com.br/wp-content/uploads/mercado-publico.jpg";
+  //const radios: string = "Local, Cidade, Quartos, Camas, Banheiros, Hospedes";
+  const [dados, setDados] = useState<Casa>();
+
   const [local, setLocal] = useState('');
   const [cidade, setCidade] = useState('');
   const [quartos, setQuartos] = useState(0);
   const [camas, setCamas] = useState(0);
   const [banheiros, setBanheiros] = useState(0);
   const [hospedes, setHospedes] = useState(0);
-  const [search, setSearch] = useState('');
 
-  const [listaResultado, setListaResultado] = useState([]);
+  const [radio, setRadio] = useState(' ');
+  const [carregando, setCarregando] = useState(false);
+  const [erro, setErro] = useState(false);
+  const [url, setUrl] = useState('http://localhost:3000/readLocal/');
+
+  
   
   
     useEffect(() => { 
+     /*
       Axios.get(`http://localhost:3000/readLocal/`).then((response) =>{ 
         setListaResultado(response.data);
       });
+      */
+      async function consultarLocal() {
+        setErro(false);
+        setCarregando(true);
+        try {
+          const resultado = await fetch(url);
+          if (resultado.ok) {
+            const dados: Casa = await resultado.json();
+            setDados(dados);
+            console.log(dados);
+          } else {
+            setErro(true);
+          }
+        } catch (error) {
+          setErro(true);
+        }
+        setCarregando(false);
+      }
+      consultarLocal();
 
-      Axios.get(`http://localhost:3000/readCidade/`).then((response) =>{ 
-        setListaResultado(response.data);
-      });
-
-      Axios.get(`http://localhost:3000/readQuartos/`).then((response) =>{ 
-        setListaResultado(response.data);
-      });
-
-      Axios.get(`http://localhost:3000/readCamas/`).then((response) =>{ 
-        setListaResultado(response.data);
-      });
-
-      Axios.get(`http://localhost:3000/readBanheiros/`).then((response) =>{ 
-        setListaResultado(response.data);
-      });
-
-      Axios.get(`http://localhost:3000/readHospedes/`).then((response) =>{ 
-        setListaResultado(response.data);
-      });
     },[]);
 
   
@@ -53,11 +62,40 @@ export default function PaginaOfertas() {
         hospedes: hospedes
   
       }});
-  };
+    };
 
   
     return (
-          <div>
+
+<>
+  
+<form onSubmit={event => {
+
+        switch(radio){
+          case 'Local':
+            setUrl(`http://localhost:3000/readLocal/`);
+          break;
+          case 'Cidade':
+            setUrl(`http://localhost:3000/readCidade/`);
+          break;
+          case 'Quartos':
+            setUrl(`http://localhost:3000/readQuartos/`);
+          break;
+          case 'Camas':
+            setUrl(`http://localhost:3000/readCamas/`);
+          break;
+          case 'Banheiros':
+            setUrl(`http://localhost:3000/readBanheiros/`);
+          break;
+          case 'Hospedes':
+            setUrl(`http://localhost:3000/readHospedes/`);
+          break;
+          default:
+            setUrl(`http://localhost:3000/readLocal/`);
+
+        }
+        event.preventDefault();
+      }}>
 
 <div className="app--container">
       <div className='register--container'>
@@ -69,7 +107,9 @@ export default function PaginaOfertas() {
     type="radio"
     name="inlineRadioOptions"
     id="inlineRadio1"
-    value="local"
+    value="Local"
+    //checked={selectedOption === "Local"}
+    onChange={event => setRadio(event.target.value)}
   />
   <label className="form-check-label" >Local</label>
 </div>
@@ -80,7 +120,8 @@ export default function PaginaOfertas() {
     type="radio"
     name="inlineRadioOptions"
     id="inlineRadio2"
-    value="cidade"
+    value="Cidade"
+    onChange={event => setRadio(event.target.value)}
   />
   <label className="form-check-label" >Cidade</label>
 </div>
@@ -91,7 +132,8 @@ export default function PaginaOfertas() {
     type="radio"
     name="inlineRadioOptions"
     id="inlineRadio3"
-    value="quarto"
+    value="Quarto"
+    onChange={event => setRadio(event.target.value)}
     
   />
   <label className="form-check-label" >Quarto</label>
@@ -104,7 +146,8 @@ export default function PaginaOfertas() {
     type="radio"
     name="inlineRadioOptions"
     id="inlineRadio1"
-    value="camas"
+    value="Camas"
+    onChange={event => setRadio(event.target.value)}
   />
   <label className="form-check-label" >Camas</label>
 </div>
@@ -115,7 +158,8 @@ export default function PaginaOfertas() {
     type="radio"
     name="inlineRadioOptions"
     id="inlineRadio2"
-    value="banheiros"
+    value="Banheiros"
+    onChange={event => setRadio(event.target.value)}
   />
   <label className="form-check-label" >Banheiros</label>
 </div>
@@ -126,7 +170,8 @@ export default function PaginaOfertas() {
     type="radio"
     name="inlineRadioOptions"
     id="inlineRadio3"
-    value="hospedes"
+    value="Hospedes"
+    onChange={event => setRadio(event.target.value)}
     
   />
   <label className="form-check-label" >Hospedes</label>
@@ -139,7 +184,7 @@ export default function PaginaOfertas() {
           placeholder="Pesquise aqui"
           className= "register--input"
           onChange={(event)=>{
-            setSearch(event.target.value);
+            setUrl(event.target.value);
           }}
         />
         
@@ -151,135 +196,39 @@ export default function PaginaOfertas() {
       
     </div>
 
-
+    </form>
     
+
+
+      {erro && <div>Ocorreu um erro!</div>}
+      {carregando ? (
+        <div>Carregando...</div>
+      ) : (
+        dados && (
+          
     <div className="container">
        <div className="row">
-
-        <div className="col">
-        <div className="card" style={{width: 300}}>
-        <div className="card-body">
-        <h5 className="card-title">Mercado Público</h5>
-        <h6 className="card-subtitle mb-2 text-muted">Porto Alegre/RS</h6>
-        <p className="card-text">
-        <a href="#" className="card-link"><img src={imgs} width="270px" height="220px"/></a>
-          </p>
-      </div>
-    </div>
-    </div>
-    
-    
-    <div className="col">
-        <div className="card" style={{width: 300}}>
-        <div className="card-body">
-        <h5 className="card-title">Mercado Público</h5>
-        <h6 className="card-subtitle mb-2 text-muted">Porto Alegre/RS</h6>
-        <p className="card-text">
-        <a href="#" className="card-link"><img src={imgs} width="270px" height="220px"/></a>
-          </p>
-      </div>
-    </div>
-    </div>
-    
-    
-    <div className="col">
-        <div className="card" style={{width: 300}}>
-        <div className="card-body">
-        <h5 className="card-title">Mercado Público</h5>
-        <h6 className="card-subtitle mb-2 text-muted">Porto Alegre/RS</h6>
-        <p className="card-text">
-        <a href="#" className="card-link"><img src={imgs} width="270px" height="220px"/></a>
-          </p>
-      </div>
-    </div>
-    </div>
-    
-    
-    <div className="col">
-        <div className="card" style={{width: 300}}>
-        <div className="card-body">
-        <h5 className="card-title">Mercado Público</h5>
-        <h6 className="card-subtitle mb-2 text-muted">Porto Alegre/RS</h6>
-        <p className="card-text">
-        <a href="#" className="card-link"><img src={imgs} width="270px" height="220px"/></a>
-          </p>
-      </div>
-    </div>
-    </div>
-    
-    
-    <div className="col">
-        <div className="card" style={{width: 300}}>
-        <div className="card-body">
-        <h5 className="card-title">Mercado Público</h5>
-        <h6 className="card-subtitle mb-2 text-muted">Porto Alegre/RS</h6>
-        <p className="card-text">
-        <a href="#" className="card-link"><img src={imgs} width="270px" height="220px"/></a>
-          </p>
-      </div>
-    </div>
-    </div>
-    
-    
-    <div className="col">
-        <div className="card" style={{width: 300}}>
-        <div className="card-body">
-        <h5 className="card-title">Mercado Público</h5>
-        <h6 className="card-subtitle mb-2 text-muted">Porto Alegre/RS</h6>
-        <p className="card-text">
-        <a href="#" className="card-link"><img src={imgs} width="270px" height="220px"/></a>
-          </p>
-      </div>
-    </div>
-    </div>
-    
-    
-    <div className="col">
-        <div className="card" style={{width: 300}}>
-        <div className="card-body">
-        <h5 className="card-title">Mercado Público</h5>
-        <h6 className="card-subtitle mb-2 text-muted">Porto Alegre/RS</h6>
-        <p className="card-text">
-        <a href="#" className="card-link"><img src={imgs} width="270px" height="220px"/></a>
-          </p>
-      </div>
-    </div>
-    </div>
-    
-    
-    <div className="col">
-        <div className="card" style={{width: 300}}>
-        <div className="card-body">
-        <h5 className="card-title">Mercado Público</h5>
-        <h6 className="card-subtitle mb-2 text-muted">Porto Alegre/RS</h6>
-        <p className="card-text">
-        <a href="#" className="card-link"><img src={imgs} width="270px" height="220px"/></a>
-          </p>
-      </div>
-    </div>
-    </div>
-    
-    
-    
-    
-    </div>
-    </div>
-    
-    <h1>Resultado</h1>
-    {listaResultado.map((val, key) =>{
-      return 
-      <div key={key}>
-      <h1> val.local  </h1>
-      <h1> val.cidade  </h1>
-      <h1> val.quartos  </h1>
-      <h1> val.camas </h1>
-      <h1> val.banheiros  </h1>
-      <h1> val.hospedes  </h1>
-      </div>
-    })}
-    </div>
-    
-       )
-     
+        
+      {dados.map((dados: Casa) =>{
+      return (
       
-    }
+      <div className="col">
+          <div className="card" style={{width: 300}}>
+            <div className="card-body">
+              <h5 className="card-title">{dados.local}</h5>
+              <h6 className="card-subtitle mb-2 text-muted">{dados.cidade}</h6>
+              <p className="card-text">
+               <a href="#" className="card-link"><img src={dados.local} width="270px" height="220px"/></a>
+              </p>
+            </div>
+          </div>
+          </div>
+            )
+          })}
+          </div>
+          </div>
+        )
+      )}
+    </>
+  );
+}
