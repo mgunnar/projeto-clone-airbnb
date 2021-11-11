@@ -20,6 +20,7 @@ export default function PaginaOfertas() {
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState(false);
   const [url, setUrl] = useState('http://localhost:3000/readCasa/');
+  const [search, setSearch] = useState('');
 
   
   
@@ -30,7 +31,7 @@ export default function PaginaOfertas() {
         setListaResultado(response.data);
       });
       */
-      async function consultarLocal() {
+      async function consulta() {
         setErro(false);
         setCarregando(true);
         try {
@@ -47,9 +48,9 @@ export default function PaginaOfertas() {
         }
         setCarregando(false);
       }
-      consultarLocal();
+      consulta();
 
-    },[]);
+    },[url]);
 
   
     const insert = () => {
@@ -72,26 +73,29 @@ export default function PaginaOfertas() {
 <form onSubmit={event => {
 
         switch(radio){
+          case 'Tudo':
+            setUrl(` http://localhost:3000/readCasa/`);
+          break;
           case 'Local':
-            setUrl(`http://localhost:3000/readCasa/`);
+            setUrl(`http://localhost:3000/readLocal/${search}`);
           break;
           case 'Cidade':
-            setUrl(`http://localhost:3000/readCidade/`);
+            setUrl(`http://localhost:3000/readCidade/${search}`);
           break;
           case 'Quartos':
-            setUrl(`http://localhost:3000/readQuartos/`);
+            setUrl(`http://localhost:3000/readQuartos/${search}`);
           break;
           case 'Camas':
-            setUrl(`http://localhost:3000/readCamas/`);
+            setUrl(`http://localhost:3000/readCamas/${search}`);
           break;
           case 'Banheiros':
-            setUrl(`http://localhost:3000/readBanheiros/`);
+            setUrl(`http://localhost:3000/readBanheiros/${search}`);
           break;
           case 'Hospedes':
-            setUrl(`http://localhost:3000/readHospedes/`);
+            setUrl(`http://localhost:3000/readHospedes/${search}`);
           break;
           default:
-            setUrl(`http://localhost:3000/readCasa/`);
+            setUrl(`http://localhost:3000/readCasa/${search}`);
 
         }
         event.preventDefault();
@@ -101,6 +105,19 @@ export default function PaginaOfertas() {
       <div className='register--container'>
         <h6 className ='register--title'>Buscar por: </h6>
         
+ <div className="form-check form-check-inline">
+  <input
+    className="form-check-input"
+    type="radio"
+    name="inlineRadioOptions"
+    id="inlineRadio1"
+    value="Tudo"
+    //checked={selectedOption === "Local"}
+    onChange={event => setRadio(event.target.value)}
+  />
+  <label className="form-check-label" >Tudo</label>
+</div>
+ 
  <div className="form-check form-check-inline">
   <input
     className="form-check-input"
@@ -132,11 +149,11 @@ export default function PaginaOfertas() {
     type="radio"
     name="inlineRadioOptions"
     id="inlineRadio3"
-    value="Quarto"
+    value="Quartos"
     onChange={event => setRadio(event.target.value)}
     
   />
-  <label className="form-check-label" >Quarto</label>
+  <label className="form-check-label" >Quartos</label>
 </div>
 
 
@@ -184,14 +201,17 @@ export default function PaginaOfertas() {
           placeholder="Pesquise aqui"
           className= "register--input"
           onChange={(event)=>{
-            setUrl(event.target.value);
+            setSearch(event.target.value);
           }}
         />
-        
-        <button 
+
+      <button 
         className='register--button'
-        onClick={insert}
-        >Buscar</button>
+        type="submit">
+          Buscar    
+      </button>
+   
+        
       </div>
       
     </div>
