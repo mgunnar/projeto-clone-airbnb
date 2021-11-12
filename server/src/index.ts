@@ -1,14 +1,13 @@
 import { connect, disconnect } from 'mongoose';
-import express, {Request, Response, NextFunction} from 'express';
-import cors from 'cors';
-import bodyparser, {json} from 'body-parser';
-import dotenv from 'dotenv';
-import morgan from 'morgan';
-
-import { CasaModel } from './casa';
-import { PedidoReservaModel } from './pedido-reserva';
-import { ReservaModel } from './reservas';
+import express                 from 'express';
+import cors                    from 'cors';
+import bodyparser, {json}      from 'body-parser';
+import dotenv                  from 'dotenv';
+import morgan                  from 'morgan';
+import { CasaModel }           from './casa';
+import { ReservaModel }        from './reservas';
 import { TipoAcomodacaoModel } from './tipo-acomodacao';
+import { Result }          from 'express-validator';
 
 //npm add express morgan nodeman ejs body-parser dotenv mongoose express-validator cors errorhandler passport jsonwebtoken passport-local passport-jwt
 //npm i @types/express --save-dev
@@ -20,10 +19,7 @@ import { TipoAcomodacaoModel } from './tipo-acomodacao';
 //npm i jest
 //npm i express-validator
 
-import { MongoParseError } from 'mongoose/node_modules/mongodb';
-import { Result } from 'express-validator';
 async function main(){
-
     try{
         const app = express();
         app.use(express.json());
@@ -33,12 +29,8 @@ async function main(){
         
         dotenv.config({path:'.env'});
         const port = process.env.port || 3000;
-
         const url = 'mongodb+srv://adminprojeto:senhasenha.123@banco-projeto-airbnb.mw94s.mongodb.net/bancocloneairbnb00?retryWrites=true&w=majority';
-        //const url = 'mongodb+srv://fabio:2010@cluster0.u9ema.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
-        //const url = 'mongodb://localhost:27017';
-        //mongodb+srv://alunos:alunos@cluster0-XXXXX.azure.mongodb.net/test?retryWrites=true&w=m
-
+        
          await connect(url);
          console.log('Conectado!');
          app.use(json());
@@ -46,30 +38,38 @@ async function main(){
             console.log(`Servidor na porta ${port}`);
         })
 
+        app.post("/insertTipoAcomodacao/", async (req, res) => {
+            const dsacomodacao = req.body.dsacomodacao;
+            const resultado = await TipoAcomodacaoModel.create({
+                dsacomodacao:   dsacomodacao
+             });         
+            console.log('Inserido!');
+            console.log(resultado);
+            res.send(`Inserção TipoAcomodação -> dsacomodacao: ${req.body.dsacomodacao}`)
+         });    
 
         app.post("/insertReserva/", async (req, res) => {
             const idcasa = req.body.idcasa;
             const checkin = req.body.checkin;
             const checkout = req.body.checkout;
             const nome = req.body.nome;
-            const telefone = req.body.telefone;
-            
+            const telefone = req.body.telefone;  
     
-            const doc = await ReservaModel.create({
+            const resultado = await ReservaModel.create({
                 idcasa:   idcasa,
                 checkin:    checkin,
                 checkout:    checkout,
                 nome:      nome,
                 telefone:  telefone
-             });
-             
-         console.log('Inserido!');
-         console.log(doc);
-         res.send(`Inserção Reserva -> checkin: ${req.body.checkin}, Checkout: ${req.body.checkout}, Nome: ${req.body.nome}`)
-         });
-    
+             });         
+            console.log('Inserido!');
+            console.log(resultado);
+            res.send(`Inserção Reserva -> checkin: ${req.body.checkin}, Checkout: ${req.body.checkout}, Nome: ${req.body.nome}`)
+         });    
 
         app.post("/insertCasa/", async (req, res) => {
+            const anfitriao= req.body.anfitriao;
+            const estado = req.body.estado;
             const local = req.body.local;
             const cidade = req.body.cidade;
             const quartos = req.body.quartos;
@@ -77,7 +77,9 @@ async function main(){
             const banheiros = req.body.banheiros;
             const hospedes = req.body.hospedes;
     
-            const doc = await CasaModel.create({
+            const resultado = await CasaModel.create({
+                anfitriao: anfitriao,
+                estado: estado,
                 local: local,
                 cidade: cidade,
                 quartos: quartos,
@@ -85,11 +87,10 @@ async function main(){
                 banheiros: banheiros,
                 hospedes: hospedes
              });
-             
-         console.log('Inserido!');
-         console.log(doc);
-         res.send(`Inserção Casa: Local: ${req.body.local}, Cidade: ${req.body.cidade}, Quartos: ${req.body.quartos}`)
-         });
+            console.log('Inserido!');
+            console.log(resultado);
+            res.send(`Inserção Casa: Local: ${req.body.local}, Cidade: ${req.body.cidade}, Quartos: ${req.body.quartos}`)
+        });
     
         app.get("/readCasa/", async (req, res)=>{
             CasaModel.find({}, (err, result)=>{
@@ -97,8 +98,7 @@ async function main(){
                   res.send(err);
                 }
                 res.send(result);
-         });
-                         
+         });          
          console.log('GetTodos!');
          console.log(Result);
          });
@@ -109,14 +109,35 @@ async function main(){
                   res.send(err);
                 }
                 res.send(result);
-         });
-                         
+         });          
          console.log('Get Reservas!');
          console.log(Result);
-         });
-        
+         });         
          
-       
+         app.get("/readAnfitriao/:search", async (req, res)=>{
+            const  search = req.params.search;
+            CasaModel.find({anfitriao: search}).exec( (err, result)=>{
+                if(err){
+                  res.send(err);
+                }
+                res.send(result);
+            });                   
+         console.log('GetTodos Anfitriao com parâmetro!');
+         console.log(Result);
+         });
+
+         app.get("/readEstado/:search", async (req, res)=>{
+            const  search = req.params.search;
+            CasaModel.find({estado: search}).exec( (err, result)=>{
+                if(err){
+                  res.send(err);
+                }
+                res.send(result);
+            });                   
+         console.log('GetTodos Estados com parâmetro!');
+         console.log(Result);
+         });
+
          app.get("/readLocal/:search", async (req, res)=>{
             const  search = req.params.search;
             CasaModel.find({local: search}).exec( (err, result)=>{
@@ -141,7 +162,6 @@ async function main(){
          console.log(Result);
          });
         
-
          app.get("/readQuartos/:search", async (req, res)=>{
             const  search = req.params.search;
             CasaModel.find({quartos: parseInt(search)}).exec( (err, result)=>{
@@ -154,8 +174,6 @@ async function main(){
          console.log(Result);
          });
         
-
-
          app.get("/readCamas/:search", async (req, res)=>{
             const  search = req.params.search;
             CasaModel.find({camas: parseInt(search)}).exec( (err, result)=>{
@@ -168,7 +186,6 @@ async function main(){
          console.log(Result);
          });
         
-
          app.get("/readBanheiros/:search", async (req, res)=>{
             const  search = req.params.search;
             CasaModel.find({banheiros: parseInt(search)}).exec( (err, result)=>{
@@ -181,7 +198,6 @@ async function main(){
          console.log(Result);
          });
         
-
          app.get("/readHospedes/:search", async (req, res)=>{
             const  search = req.params.search;
             CasaModel.find({hospedes: parseInt(search)}).exec( (err, result)=>{
@@ -193,18 +209,7 @@ async function main(){
          console.log('Get por hospedes!');
          console.log(Result);
          });
-        
-         /*
-         //1 - INSERIR
-         const documentoInserido = await ProdutoModel.create({
-             nome: 'Alface',
-             cost: 0.89,
-             category: 'Verdura'
-         });
-
-         console.log('Inserido!');
-         console.log(documentoInserido);
-
+        /*
          //2 - BUSCAR
          const produtos = await ProdutoModel.find().exec();
          console.log('Resultado da consulta Exec: ')
@@ -237,10 +242,7 @@ async function main(){
              console.log(documentoRemovido);
 
          }
-        
-
-
-
+ 
          app.listen(port, ()=>{
              console.log(`Servidor na porta ${port}`);
          })
@@ -250,13 +252,9 @@ async function main(){
     }catch(error){
         console.log('Falha de acesso!');
         console.log(error);
-
     }finally{
         //await disconnect();
-       // console.log('Desconectado do mongodb Atlas!');
+        //console.log('Desconectado do mongodb Atlas!');
     }
-
-
 }
-
 main();

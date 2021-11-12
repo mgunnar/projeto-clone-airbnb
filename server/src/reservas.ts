@@ -4,8 +4,7 @@ import {Casa} from './casa';
 
 //alterações Matheus
 export interface reserva {
-    //idcasa:      Casa;
-    idcasa:      number;
+    idcasa:      Casa;
     checkin:     Date;
     checkout:    Date;
     nome:      string;
@@ -13,8 +12,7 @@ export interface reserva {
 }
 //alterações Matheus
 const reservaSchema = new Schema<reserva>({
-    //idcasa:      { type: SchemaTypes.ObjectId, ref: 'Casa', required: true },
-    idcasa:     {type: Number, required: true},
+    idcasa:      { type: SchemaTypes.ObjectId, ref: 'Casa', required: true },
     checkin:     {type: Date, required: true},
     checkout:    {type: Date, required: true},
     nome:      {type: String, required: true},
