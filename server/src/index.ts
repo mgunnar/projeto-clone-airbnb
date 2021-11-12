@@ -1,10 +1,14 @@
 import { connect, disconnect } from 'mongoose';
-import { CasaModel } from './casa';
 import express, {Request, Response, NextFunction} from 'express';
 import cors from 'cors';
 import bodyparser, {json} from 'body-parser';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
+
+import { CasaModel } from './casa';
+import { PedidoReservaModel } from './pedido-reserva';
+import { ReservaModel } from './reservas';
+import { TipoAcomodacaoModel } from './tipo-acomodacao';
 
 //npm add express morgan nodeman ejs body-parser dotenv mongoose express-validator cors errorhandler passport jsonwebtoken passport-local passport-jwt
 //npm i @types/express --save-dev
@@ -42,6 +46,29 @@ async function main(){
             console.log(`Servidor na porta ${port}`);
         })
 
+
+        app.post("/insertReserva/", async (req, res) => {
+            const idcasa = req.body.idcasa;
+            const checkin = req.body.checkin;
+            const checkout = req.body.checkout;
+            const nome = req.body.nome;
+            const telefone = req.body.telefone;
+            
+    
+            const doc = await ReservaModel.create({
+                idcasa:   idcasa,
+                checkin:    checkin,
+                checkout:    checkout,
+                nome:      nome,
+                telefone:  telefone
+             });
+             
+         console.log('Inserido!');
+         console.log(doc);
+         res.send(`Inserção Reserva -> checkin: ${req.body.checkin}, Checkout: ${req.body.checkout}, Nome: ${req.body.nome}`)
+         });
+    
+
         app.post("/insertCasa/", async (req, res) => {
             const local = req.body.local;
             const cidade = req.body.cidade;
@@ -75,6 +102,19 @@ async function main(){
          console.log('GetTodos!');
          console.log(Result);
          });
+
+         app.get("/readReserva/", async (req, res)=>{
+            ReservaModel.find({}, (err, result)=>{
+                if(err){
+                  res.send(err);
+                }
+                res.send(result);
+         });
+                         
+         console.log('Get Reservas!');
+         console.log(Result);
+         });
+        
          
        
          app.get("/readLocal/:search", async (req, res)=>{

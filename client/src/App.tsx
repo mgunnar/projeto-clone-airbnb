@@ -3,6 +3,7 @@ import './App.css';
 import { Navbar, Nav } from 'react-bootstrap';
 import { NavLink, Outlet} from 'react-router-dom';
 
+
 export default function App() {
   return (
     <>
@@ -15,6 +16,7 @@ export default function App() {
             <Nav.Link as={NavLink} to="/reserva">Reserva</Nav.Link>
             <Nav.Link as={NavLink} to="/cadastro">Cadastro</Nav.Link>
             <Nav.Link as={NavLink} to="/sobre">Sobre</Nav.Link>
+            
           </Nav>
         </Navbar.Collapse>
       </Navbar>

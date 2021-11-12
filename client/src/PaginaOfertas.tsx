@@ -4,6 +4,7 @@ import './App.css';
 import {Casa} from './dtos';
 
 
+
 export default function PaginaOfertas() {
   //const imgs: string = "https://imoveisvaledosinos.com.br/wp-content/uploads/mercado-publico.jpg";
   //const radios: string = "Local, Cidade, Quartos, Camas, Banheiros, Hospedes";
@@ -112,6 +113,7 @@ export default function PaginaOfertas() {
     name="inlineRadioOptions"
     id="inlineRadio1"
     value="Tudo"
+    
     //checked={selectedOption === "Local"}
     onChange={event => setRadio(event.target.value)}
   />
@@ -220,7 +222,7 @@ export default function PaginaOfertas() {
     
 
 
-      {erro && <div>Ocorreu um erro!</div>}
+      {erro && <div>Não encontramos itens!</div>}
       {carregando ? (
         <div>Carregando...</div>
       ) : (
@@ -231,6 +233,8 @@ export default function PaginaOfertas() {
         
       {dados.map((dados: Casa) =>{
       const link=`/detalhe?pageId=${dados.id}`;
+
+      if(dados.local!= null)
       return (
       
       <div className="col">
@@ -239,12 +243,23 @@ export default function PaginaOfertas() {
               <h5 className="card-title">{dados.local}</h5>
               <h6 className="card-subtitle mb-2 text-muted">{dados.cidade}</h6>
               <p className="card-text">
-               <a href={link} className="card-link"><img src={dados.local} width="270px" height="220px"/></a>
+               <a href="/detalhe?pageId= 2" className="card-link"><img src={dados.local} width="270px" height="220px"/></a>
               </p>
             </div>
           </div>
           </div>
             )
+
+            else{
+              return 
+              (
+                <div>
+
+                  <h5><b>Não encontramos ofertas!!</b></h5>
+                  </div>
+
+              );
+            }
           })}
           </div>
           </div>

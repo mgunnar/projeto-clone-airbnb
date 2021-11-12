@@ -1,6 +1,83 @@
+import React, {useState, useEffect} from 'react';
+import Axios from "axios";
+import './App.css';
+import {Casa} from './dtos';
 
 export default function PaginaReserva() {
     const imgs: string = "https://imoveisvaledosinos.com.br/wp-content/uploads/mercado-publico.jpg";
+
+
+  //const radios: string = "Local, Cidade, Quartos, Camas, Banheiros, Hospedes";
+  const [dados, setDados] = useState<Casa>();
+
+  const [local, setLocal] = useState('');
+  const [cidade, setCidade] = useState('');
+  const [quartos, setQuartos] = useState(0);
+  const [camas, setCamas] = useState(0);
+  const [banheiros, setBanheiros] = useState(0);
+  const [hospedes, setHospedes] = useState(0);
+
+  
+  const [carregando, setCarregando] = useState(false);
+  const [erro, setErro] = useState(false);
+  const [url, setUrl] = useState('');
+  const [search, setSearch] = useState('');
+
+  
+  
+  
+    useEffect(() => { 
+     /*
+      Axios.get(`http://localhost:3000/readLocal/`).then((response) =>{ 
+        setListaResultado(response.data);
+      });
+      */
+      async function consulta() {
+        setErro(false);
+        setCarregando(true);
+        try {
+
+        //Realizar um POST
+        
+        const post: Casa = {
+        local: local,
+        cidade: cidade,
+        quartos: quartos,
+        camas: camas,
+        banheiros: banheiros,
+        hospedes: hospedes
+
+        };
+        const resposta = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(post)
+        });
+        if (resposta.ok) {
+            const dadosjson: Casa = await resposta.json();
+            console.log('Dados:');
+            console.log(dadosjson);
+        } else {
+            console.log('POST status:', resposta.status);
+            console.log('POST statusText:', resposta.statusText);
+            setErro(true);
+        }
+        
+
+        } catch (error) {
+          setErro(true);
+        }
+        setCarregando(false);
+      }
+      consulta();
+
+    },[url]);
+
+
+
+
         return (
       <div className="container">
       <div className="row">

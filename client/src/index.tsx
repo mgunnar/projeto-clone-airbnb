@@ -8,6 +8,7 @@ import PaginaNaoEcontrada from './PaginaNaoEcontrada';
 import PaginaPrincipal from './PaginaPrincipal';
 import PaginaOfertas from './PaginaOfertas';
 import PaginaReserva from './PaginaReserva';
+
 import PaginaCadastro from './PaginaCadastro';
 import PaginaDetalheOferta from './PaginaDetalheOferta';
 import PaginaSobre from './PaginaSobre';
@@ -26,6 +27,7 @@ ReactDOM.render(
           <Route path="cadastro" element={<PaginaCadastro />} />
           <Route path="detalhe" element={<PaginaDetalheOferta />} />
           <Route path="sobre" element={<PaginaSobre />} />
+          
           <Route path="*" element={<PaginaNaoEcontrada />} />
         </Route>
       </Routes>
