@@ -22,7 +22,8 @@ export default function PaginaReserva() {
   const [erro, setErro] = useState(false);
   const [url, setUrl] = useState('');
   const [search, setSearch] = useState('');
-
+  const estado="";
+  const anfitriao="";
   
   
   
@@ -40,6 +41,8 @@ export default function PaginaReserva() {
         //Realizar um POST
         
         const post: Casa = {
+          anfitriao: anfitriao,
+        estado: estado,
         local: local,
         cidade: cidade,
         quartos: quartos,

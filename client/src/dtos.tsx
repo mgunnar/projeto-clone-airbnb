@@ -1,8 +1,10 @@
 export interface Casa {
     [x: string]: any;
-    local:         string;
-    cidade:  string;
-    quartos: number;
+    anfitriao:  string;
+    local:      string;
+    cidade:     string;
+    estado:     string;
+    quartos:    number;
     camas:      number;
     banheiros:  number;
     hospedes:   number;

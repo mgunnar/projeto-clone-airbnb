@@ -1,48 +1,36 @@
 import React, {useState, useEffect} from 'react';
-import Axios from "axios";
 import './App.css';
 import {Casa} from './dtos';
 
 
 export default function PaginaCadastro() {
   const imgs: string = "https://imoveisvaledosinos.com.br/wp-content/uploads/mercado-publico.jpg";
-
-  //const imgs: string = "https://imoveisvaledosinos.com.br/wp-content/uploads/mercado-publico.jpg";
-  //const radios: string = "Local, Cidade, Quartos, Camas, Banheiros, Hospedes";
   const [dados, setDados] = useState<Casa>();
 
+  const [anfitriao, setAnfitriao] = useState('');
+  const [estado, setEstado] = useState('');
   const [local, setLocal] = useState('');
   const [cidade, setCidade] = useState('');
   const [quartos, setQuartos] = useState(0);
   const [camas, setCamas] = useState(0);
   const [banheiros, setBanheiros] = useState(0);
   const [hospedes, setHospedes] = useState(0);
-
   
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState(false);
   const [url, setUrl] = useState('');
   const [search, setSearch] = useState('');
 
-  
-  
-  
-    useEffect(() => { 
-     /*
-      Axios.get(`http://localhost:3000/readLocal/`).then((response) =>{ 
-        setListaResultado(response.data);
-      });
-      */
+  useEffect(() => { 
       async function consulta() {
         setErro(false);
         setCarregando(true);
         try {
-
-        //Realizar um POST
-        
         const post: Casa = {
+        anfitriao: anfitriao,
         local: local,
         cidade: cidade,
+        estado: estado,
         quartos: quartos,
         camas: camas,
         banheiros: banheiros,
@@ -89,6 +77,8 @@ export default function PaginaCadastro() {
     <div className="card" style={{width: '80%'}}>
       <div className="card-body">
         <div className="card-caption">
+
+
         <h5 className="card-title">
           Local da oferta: 
           <input 
@@ -99,13 +89,11 @@ export default function PaginaCadastro() {
           onChange={(event)=>{
             setLocal(event.target.value);
           }}
-        />
-
-          
+        />     
         </h5>
-        <h6 className="card-subtitle mb-2 text-muted">
-          Cidade da Oferta:
 
+        <h6 className="card-subtitle mb-2 text-muted">
+          Cidade:
           <input 
           type="text" 
           name="cidade"
@@ -117,6 +105,36 @@ export default function PaginaCadastro() {
         />
           
           </h6>
+
+          <h6 className="card-subtitle mb-2 text-muted">
+          Estado:
+          <input 
+          type="text" 
+          name="estado"
+          placeholder="Estado"
+          className= "register--input"
+          onChange={(event)=>{
+            setEstado(event.target.value);
+          }}
+        />
+          
+          </h6>
+
+        <h6 className="card-subtitle mb-2 text-muted">
+          Anfitrião:
+          <input 
+          type="text" 
+          name="anfitriao"
+          placeholder="Anfitrião"
+          className= "register--input"
+          onChange={(event)=>{
+            setAnfitriao(event.target.value);
+          }}
+        />
+          
+          </h6>
+
+
         </div>
         <p className="card-text">
          <a href="#" className="card-link"><img src={imgs} width="98%" height="320px"/></a>
