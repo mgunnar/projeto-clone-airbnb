@@ -25,7 +25,7 @@ ReactDOM.render(
                      </Route>
           <Route path="reserva" element={<PaginaReserva />} />
           <Route path="cadastro" element={<PaginaCadastro />} />
-          <Route path="detalhe" element={<PaginaDetalheOferta />} />
+          <Route path="detalhe/:id" element={<PaginaDetalheOferta />} />
           <Route path="sobre" element={<PaginaSobre />} />
           
           <Route path="*" element={<PaginaNaoEcontrada />} />

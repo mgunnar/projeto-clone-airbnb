@@ -206,56 +206,6 @@ export default function PaginaCadastro() {
         </p>
         </div>
 
-        <div className="rightPosition">
-
-        <p className="card-text">
-          Check-In: dateObject
-          <input 
-          type="date" 
-          name="check-in"
-          
-          className= "register--input"
-          onChange={(event)=>{
-            //setSearch(event.target.value);
-          }}
-        />
-        </p>
-        <p className="card-text">
-          Check-Out: dateObject 
-          <input 
-          type="date" 
-          name="check-out"
-          
-          className= "register--input"
-          onChange={(event)=>{
-            //setSearch(event.target.value);
-          }}
-        />
-        </p>
-        <p className="card-text">
-         Nome:
-         <input 
-          type="text" 
-          name="Nome"
-          placeholder="Nome"
-          className= "register--input"
-          onChange={(event)=>{
-            //setSearch(event.target.value);
-          }}
-        />
-        </p>
-        <p className="card-text">
-         Telefone:
-         <input 
-          type="text" 
-          name="telefone"
-          placeholder="Telefone"
-          className= "register--input"
-          onChange={(event)=>{
-            //setSearch(event.target.value);
-          }}
-        />
-        </p>
         <p className="card-text">
           
         </p>
@@ -268,18 +218,18 @@ export default function PaginaCadastro() {
         <button
         className='register--button'
         type="submit">
-          Aprovar</button>
+          Salvar</button>
         <button
         className='register--button'
         type="reset">
-          Recusar</button>
+          Limpar</button>
         </div>
 
       </div>
     </div>
     </div>
     </div>
-    </div>
+    
 
     </form>
     </>

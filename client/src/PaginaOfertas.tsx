@@ -1,8 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import './App.css';
 import {Casa} from './dtos';
+import { Route,useParams, useNavigate } from 'react-router-dom'
 
 export default function PaginaOfertas() {
+  let parametros = useParams();
+    let Id = parametros.id!;
+    let navigate = useNavigate();
   const [dados, setDados] = useState<Casa>();
 
   const [anfitriao, setAnfitriao] = useState('');
@@ -43,6 +47,7 @@ export default function PaginaOfertas() {
   
   return (
     <>
+      <div className="app--containerBlock">
       <form onSubmit={event => {
         switch(radio){
           case 'Anfitriao':
@@ -77,7 +82,7 @@ export default function PaginaOfertas() {
         }
         event.preventDefault();
       }}>
-
+    
       <div className="app--container">
         <div className='register--container'>
           <h6 className ='register--title'>Buscar por: </h6>
@@ -210,8 +215,15 @@ export default function PaginaOfertas() {
                       <div className="card-body">
                         <h5 className="card-title">{dados.local}</h5>
                         <h6 className="card-subtitle mb-2 text-muted">{dados.cidade}</h6>
+                        <div>
+                        <button onClick={() => {
+                          
+                            navigate(`/detalhe/${dados.camas}`);
+                            }}/>
+                         </div>
                         <p className="card-text">
                           <a href="/detalhe?pageId= 2" className="card-link"><img src={dados.local} width="270px" height="220px"/></a>
+                          
                         </p>
                       </div>
                     </div>
@@ -222,6 +234,7 @@ export default function PaginaOfertas() {
           </div>
         )
       )}
+      </div>
     </>
   );
 }

@@ -209,7 +209,20 @@ async function main(){
          console.log('Get por hospedes!');
          console.log(Result);
          });
+
+         app.get("/readCasa/:id", async (req, res)=>{
+          const  id = req.params.id;
+          CasaModel.findById({id}).exec( (err, result)=>{
+              if(err){
+                res.send(err);
+              }
+              res.send(result);
+          });                   
+       console.log('Get por Casa ID!');
+       console.log(Result);
+       });
         /*
+        ProdutoModel.findById('169c9130052a4d695b28229')
          //2 - BUSCAR
          const produtos = await ProdutoModel.find().exec();
          console.log('Resultado da consulta Exec: ')
