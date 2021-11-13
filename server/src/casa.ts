@@ -2,6 +2,7 @@ import { model, Schema } from 'mongoose';
 //npm add mongoose
 
 export interface Casa {
+    //_id? : string;
     estado: string;
     anfitriao: string;
     local:      string;
@@ -13,6 +14,7 @@ export interface Casa {
 }
 
 const CasaSchema = new Schema<Casa>({
+ //   _id: {type: String, required: true},
     estado:      {type: String, required: true},
     anfitriao:     {type: String, required: true},
     local:      {type: String, required: true},

@@ -7,10 +7,10 @@ import { Route,useParams, useNavigate } from 'react-router-dom'
 
 export default function PaginaDetalhe() {
     let parametros = useParams();
-    let Id = parametros.id!;
+    let Idparametro: string = parametros.id!;
     let navigate = useNavigate();
     const imgs: string = "https://imoveisvaledosinos.com.br/wp-content/uploads/mercado-publico.jpg";
-
+    const [Id, setId] = useState(Idparametro);
    
 
   //const radios: string = "Local, Cidade, Quartos, Camas, Banheiros, Hospedes";
@@ -31,7 +31,7 @@ export default function PaginaDetalhe() {
    
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState(false);
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState(`http://localhost:3000/readCasa/${Id}`);
   const [search, setSearch] = useState('');
   const estado="";
   const anfitriao="";
@@ -44,66 +44,20 @@ export default function PaginaDetalhe() {
         setListaResultado(response.data);
       });
       */
+      
       async function consulta() {
         setErro(false);
         setCarregando(true);
         try {
-
-        //Realizar um POST
-        
-        const post: Casa = {
-        anfitriao: anfitriao,
-        estado: estado,
-        local: local,
-        cidade: cidade,
-        quartos: quartos,
-        camas: camas,
-        banheiros: banheiros,
-        hospedes: hospedes
-
-        };
-        const resposta = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(post)
-        });
-        if (resposta.ok) {
-            const dadosjson: Casa = await resposta.json();
-            console.log('Dados:');
-            console.log(dadosjson);
-        } else {
-            console.log('POST status:', resposta.status);
-            console.log('POST statusText:', resposta.statusText);
-            setErro(true);
-        }
-        /*
-          const postReserva: Reserva = {
-            idcasa:      Casa,
-            checkin:     checkin,
-            checkout:    checkout,
-            nome:      nome,
-            telefone:   telefone
-  
-          };
-          const respostaReserva = await fetch(url, {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(postReserva)
-          });
-          if (respostaReserva.ok) {
-              const dadosjson: Casa = await respostaReserva.json();
-              console.log('Dados:');
-              console.log(dadosjson);
+          const resultado = await fetch(url);
+          if (resultado.ok) {
+            const dados: Casa = await resultado.json();
+            setDados(dados);
+            console.log(dados);
           } else {
-              console.log('POST status:', respostaReserva.status);
-              console.log('POST statusText:', respostaReserva.statusText);
-              setErro(true);
+            setErro(true);
+            console.log(dados);
           }
-*/
         } catch (error) {
           setErro(true);
         }
@@ -116,13 +70,24 @@ export default function PaginaDetalhe() {
    
 
         return (
-      <div className="container">
+      
+      <div >
+      
+      {erro && <div>Ocorreu um erro!</div>}
+      {carregando ? (
+        <div>Carregando...</div>
+      ) : (
+        dados && (
+          
+          <div>
+
       <div className="row">
       <div className="col">
           <div className="card" style={{width: '80%'}}>
             <div className="card-body">
-              <h5 className="card-title">Local da oferta</h5>
-              <h6 className="card-subtitle mb-2 text-muted">Cidade da Oferta</h6>
+              <h5 className="card-title">{dados.local}</h5>
+              <h6 className="card-subtitle mb-2 text-muted">{dados.cidade} / {dados.estado}</h6>
+              <h6 className="card-subtitle mb-2 text-muted"><b>Anfitrião:</b> {dados.anfitriao}</h6>
               <p className="card-text">
                <a href="#" className="card-link"><img src={imgs} width="98%" height="320px"/></a>
               </p>
@@ -133,16 +98,16 @@ export default function PaginaDetalhe() {
                 Tipo de Moradia: [casa, apartamento]
               </p>
               <p className="card-text">
-               Quarto: 
+               Quarto: {dados.quartos}
               </p>
               <p className="card-text">
-               Camas:
+               Camas:{dados.camas}
               </p>
               <p className="card-text">
-               Banheiros
+               Banheiros: {dados.banheiros}
               </p>
               <p className="card-text">
-                Hóspedes:
+                Hóspedes: {dados.hospedes}
               </p>
               <p className="card-text">
                
@@ -206,7 +171,7 @@ export default function PaginaDetalhe() {
             />
             </p>
               <p className="card-text">
-                Valor da Outra Página: {Id}
+               
               </p>
               <p className="card-text">
                
@@ -239,9 +204,12 @@ export default function PaginaDetalhe() {
           </div>
           </div>
           </div>
-    </div>
-    
-       )
-     
-      
-    }
+          </div>
+
+
+
+      )
+    )}
+  </div>
+);
+}

@@ -2,160 +2,135 @@ import React, {useState, useEffect} from 'react';
 import Axios from "axios";
 import './App.css';
 import {Casa} from './dtos';
+import { Link,useParams, useNavigate } from 'react-router-dom'
+
+import "bootstrap/dist/css/bootstrap.css";
+import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
+//npm i bootstrap
+//npm install react-bootstrap-table2-overlay
+//npm i react-bootstrap-table2-paginator --force
+//npm i react-bootstrap-table-next --force
+
+import BootstrapTable from "react-bootstrap-table-next";
+import paginationFactory from "react-bootstrap-table2-paginator";
 
 export default function PaginaReserva() {
-    const imgs: string = "https://imoveisvaledosinos.com.br/wp-content/uploads/mercado-publico.jpg";
+  let parametros = useParams();
+  let Idparams = parametros.id!;
+  let navigate = useNavigate();
+const [dados, setDados] = useState<Casa>();
+let [total, setTotal] = useState(0);
+const [Id, setId] = useState('');
 
 
-  //const radios: string = "Local, Cidade, Quartos, Camas, Banheiros, Hospedes";
-  const [dados, setDados] = useState<Casa>();
+const [anfitriao, setAnfitriao] = useState('');
+const [estado, setEstado] = useState('');
+const [local, setLocal] = useState('');
+const [cidade, setCidade] = useState('');
+const [quartos, setQuartos] = useState(0);
+const [camas, setCamas] = useState(0);
+const [banheiros, setBanheiros] = useState(0);
+const [hospedes, setHospedes] = useState(0);
 
-  const [local, setLocal] = useState('');
-  const [cidade, setCidade] = useState('');
-  const [quartos, setQuartos] = useState(0);
-  const [camas, setCamas] = useState(0);
-  const [banheiros, setBanheiros] = useState(0);
-  const [hospedes, setHospedes] = useState(0);
+const [radio, setRadio] = useState('');
+const [carregando, setCarregando] = useState(false);
+const [erro, setErro] = useState(false);
+const [url, setUrl] = useState(`http://localhost:3000/readCasa/`);
 
-  
-  const [carregando, setCarregando] = useState(false);
-  const [erro, setErro] = useState(false);
-  const [url, setUrl] = useState('');
-  const [search, setSearch] = useState('');
-  const estado="";
-  const anfitriao="";
-  
-  
-  
-    useEffect(() => { 
-     /*
-      Axios.get(`http://localhost:3000/readLocal/`).then((response) =>{ 
-        setListaResultado(response.data);
-      });
-      */
-      async function consulta() {
-        setErro(false);
-        setCarregando(true);
-        try {
+const [search, setSearch] = useState('');
 
-        //Realizar um POST
+  useEffect(() => { 
+   async function consulta() {
+      setErro(false);
+      setCarregando(true);
+      try {
+        const resultado = await fetch(url);
+        //const totalCasa = await fetch(urli);
         
-        const post: Casa = {
-          anfitriao: anfitriao,
-        estado: estado,
-        local: local,
-        cidade: cidade,
-        quartos: quartos,
-        camas: camas,
-        banheiros: banheiros,
-        hospedes: hospedes
+        if (resultado.ok) {
+          const dados: Casa = await resultado.json();
+          //const total = await totalCasa.json();
 
-        };
-        const resposta = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(post)
-        });
-        if (resposta.ok) {
-            const dadosjson: Casa = await resposta.json();
-            console.log('Dados:');
-            console.log(dadosjson);
+          setDados(dados);
+          //setTotal(total);
+          console.log(dados);
         } else {
-            console.log('POST status:', resposta.status);
-            console.log('POST statusText:', resposta.statusText);
-            setErro(true);
-        }
-        
-
-        } catch (error) {
           setErro(true);
         }
-        setCarregando(false);
+        
+        
+      } catch (error) {
+        setErro(true);
       }
-      consulta();
-
-    },[url]);
-
-
-
-
-        return (
-      <div className="container">
-      <div className="row">
-      <div className="col">
-          <div className="card" style={{width: '80%'}}>
-            <div className="card-body">
-              <h5 className="card-title">Local da oferta</h5>
-              <h6 className="card-subtitle mb-2 text-muted">Cidade da Oferta</h6>
-              <p className="card-text">
-               <a href="#" className="card-link"><img src={imgs} width="98%" height="320px"/></a>
-              </p>
-              <hr/>
-
-              <div className="leftPosition">
-              <p className="card-text">
-                Tipo de Moradia: [casa, apartamento]
-              </p>
-              <p className="card-text">
-               Quarto: 
-              </p>
-              <p className="card-text">
-               Camas:
-              </p>
-              <p className="card-text">
-               Banheiros
-              </p>
-              <p className="card-text">
-                Hóspedes:
-              </p>
-              <p className="card-text">
-               
-              </p>
-              <p className="card-text">
-               
-              </p>
-              <p className="card-text">
-               
-              </p>
-              </div>
-
-              <div className="rightPosition">
-
-              <p className="card-text">
-                Check-In: dateObject
-              </p>
-              <p className="card-text">
-                Check-Out: dateObject 
-              </p>
-              <p className="card-text">
-               Nome:
-              </p>
-              <p className="card-text">
-               Telefone:
-              </p>
-              <p className="card-text">
-                
-              </p>
-              <p className="card-text">
-               
-              </p>
-              <p className="card-text">
-               
-              </p>
-              <button>Aprovar</button>
-              <button>Recusar</button>
-              </div>
-
-            </div>
-          </div>
-          </div>
-          </div>
-          </div>
-    
-    
-       )
-     
+      setCarregando(false);
       
     }
+    consulta();
+
+
+
+  },[url]);
+
+
+
+return (
+  <div >
+      
+    
+
+    {erro && <div>Não encontramos itens!</div>}
+      {carregando ? (
+        <div>Carregando...</div>
+      ) : (
+      dados && (
+          <div>
+          
+            <table  width={'98%'} className='tblListForm'>
+              <tr>
+                <th>Anfitrião</th>
+                <th>Local</th>
+                <th>Cidade</th>
+                <th>Estado</th>
+                <th>Quartos </th>
+                <th>Camas</th>
+                <th>Banheiros</th>
+                <th>Hospedes</th>
+                <th>Ação</th>
+              </tr>
+
+              {dados.map((dados: Casa) =>{
+                return(
+                
+                <tr>
+                  <td>{dados.anfitriao}</td>
+                  <td>{dados.local}</td>
+                  <td>{dados.cidade}</td>
+                  <td>{dados.estado}</td>
+                  <td>{dados.quartos}</td>
+                  <td>{dados.camas}</td>
+                  <td>{dados.banheiros}</td>
+                  <td>{dados.hospedes}</td>
+                  <td>
+
+                  
+                   <button onClick={() => setUrl(`http://localhost:3000/deleteCasa/${Id}}`)}>Excluir</button>
+                    
+                    
+                  
+                  </td>
+                </tr>
+                
+              )
+              })}
+
+            </table>
+
+ 
+
+          </div>
+        )
+      )
+    }
+   </div>
+  );
+}

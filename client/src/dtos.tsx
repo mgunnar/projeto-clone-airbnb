@@ -1,5 +1,6 @@
 export interface Casa {
-    [x: string]: any;
+    [x: string]:    any;
+   // _id:        string;
     anfitriao:  string;
     local:      string;
     cidade:     string;
@@ -17,4 +18,10 @@ export interface Reserva extends Casa{
     checkout:    Date;
     nome:      string;
     telefone:   number
+}
+
+export interface Cols{
+    dataField: string,
+      text: string,
+      sort:string
 }

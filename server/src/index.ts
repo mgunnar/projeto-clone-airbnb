@@ -1,4 +1,5 @@
 import { connect, disconnect } from 'mongoose';
+import { ObjectId } from 'mongodb';
 import express                 from 'express';
 import cors                    from 'cors';
 import bodyparser, {json}      from 'body-parser';
@@ -29,6 +30,7 @@ async function main(){
         
         dotenv.config({path:'.env'});
         const port = process.env.port || 3000;
+       // const url='mongodb+srv://fabio:2010@cluster0.u9ema.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
         const url = 'mongodb+srv://adminprojeto:senhasenha.123@banco-projeto-airbnb.mw94s.mongodb.net/bancocloneairbnb00?retryWrites=true&w=majority';
         
          await connect(url);
@@ -210,9 +212,10 @@ async function main(){
          console.log(Result);
          });
 
-         app.get("/readCasa/:id", async (req, res)=>{
-          const  id = req.params.id;
-          CasaModel.findById({id}).exec( (err, result)=>{
+         app.get("/readCasa/:Id/", async (req, res)=>{
+          const  id = req.params.Id;
+          console.log(`Valor recebido do client:${id}:`)
+          CasaModel.findById({_id: new ObjectId(id)}).exec((err, result) => {
               if(err){
                 res.send(err);
               }
@@ -221,6 +224,27 @@ async function main(){
        console.log('Get por Casa ID!');
        console.log(Result);
        });
+
+       app.get("/readCasaCount/", async (req,res)=>{
+        CasaModel.find().countDocuments().exec((err, result)=>{
+           res.send(result);
+        });
+        console.log(Result);
+       })
+
+       app.get("/deleteCasa/:Id", async (req, res)=>{
+        const  id = req.params.Id;
+        //CasaModel.deleteOne({ _id : new ObjectId('61688ef26e1a81282ac2a1ef')})
+        CasaModel.deleteOne({ _id : new ObjectId(id)}).exec((err, result) => {
+          if(err){
+            res.send(err);
+          }
+          res.send(result);
+        });                   
+          console.log('Delete por Casa ID!');
+          console.log(Result);
+        });
+      
         /*
         ProdutoModel.findById('169c9130052a4d695b28229')
          //2 - BUSCAR
@@ -271,3 +295,7 @@ async function main(){
     }
 }
 main();
+function _id(_id: any, arg1: { $eq: ObjectId; }) {
+  throw new Error('Function not implemented.');
+}
+

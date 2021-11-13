@@ -210,19 +210,18 @@ export default function PaginaOfertas() {
             <div className="row">
               {dados.map((dados: Casa) =>{
                 return (
-                  <div className="col">
+                  <div className="col" onClick={() => {
+                    navigate(`/detalhe/${dados._id}`);
+                    }}>
                     <div className="card" style={{width: 300}}>
                       <div className="card-body">
                         <h5 className="card-title">{dados.local}</h5>
                         <h6 className="card-subtitle mb-2 text-muted">{dados.cidade}</h6>
-                        <div>
-                        <button onClick={() => {
-                          
-                            navigate(`/detalhe/${dados.camas}`);
-                            }}/>
-                         </div>
                         <p className="card-text">
-                          <a href="/detalhe?pageId= 2" className="card-link"><img src={dados.local} width="270px" height="220px"/></a>
+                          <a href=''><img src={dados.local} width="270px" height="220px" onClick={() => {
+                             navigate(`/detalhe/${dados._id}`);
+                          }}/>
+                          </a>
                           
                         </p>
                       </div>
