@@ -9,11 +9,12 @@ export interface Casa {
     camas:      number;
     banheiros:  number;
     hospedes:   number;
+    moradia:  string;
 }
 
-export interface Reserva extends Casa{
+export interface Reserva{
     [x: string]: any;
-    idcasa:      Casa;
+    idcasa:      Number;
     checkin:     Date;
     checkout:    Date;
     nome:      string;

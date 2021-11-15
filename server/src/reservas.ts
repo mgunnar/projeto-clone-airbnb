@@ -1,10 +1,11 @@
+import { ObjectId } from 'bson';
 import { model, Schema, SchemaTypes } from 'mongoose';
 import {Casa} from './casa';
 //npm add mongoose
 
 //alterações Matheus
-export interface reserva {
-    idcasa:      Casa;
+export interface reserva extends Casa {
+    idcasa:      Casa[];
     checkin:     Date;
     checkout:    Date;
     nome:      string;
@@ -12,7 +13,7 @@ export interface reserva {
 }
 //alterações Matheus
 const reservaSchema = new Schema<reserva>({
-    idcasa:      { type: SchemaTypes.ObjectId, ref: 'Casa', required: true },
+    idcasa:      [{ type: SchemaTypes.ObjectId,  ref: 'Casa' }],
     checkin:     {type: Date, required: true},
     checkout:    {type: Date, required: true},
     nome:      {type: String, required: true},

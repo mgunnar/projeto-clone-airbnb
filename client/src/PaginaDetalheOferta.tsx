@@ -3,6 +3,8 @@ import Axios from "axios";
 import './App.css';
 import {Casa, Reserva} from './dtos';
 import { Route,useParams, useNavigate } from 'react-router-dom'
+import { castArray } from 'lodash';
+//https://developer.mozilla.org/pt-BR/docs/Web/HTML/Element/input/date
 
 
 export default function PaginaDetalhe() {
@@ -15,6 +17,7 @@ export default function PaginaDetalhe() {
 
   //const radios: string = "Local, Cidade, Quartos, Camas, Banheiros, Hospedes";
   const [dados, setDados] = useState<Casa>();
+  const [dadosReserva, setDadosReserva] = useState<Reserva>();
 
   const [local, setLocal] = useState('');
   const [cidade, setCidade] = useState('');
@@ -23,7 +26,7 @@ export default function PaginaDetalhe() {
   const [banheiros, setBanheiros] = useState(0);
   const [hospedes, setHospedes] = useState(0);
 
-  const [idcasa,setIdcasa] = useState<Casa>(); 
+  const [idcasa,setIdcasa] = useState(0); 
   const [checkin,setCheckin] = useState(new Date());
   const [checkout,setCheckout] = useState(new Date());
   const [nome,setNome] = useState('');
@@ -32,10 +35,40 @@ export default function PaginaDetalhe() {
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState(false);
   const [url, setUrl] = useState(`http://localhost:3000/readCasa/${Id}`);
+  const [urlInsert, setUrlInsert] = useState(url);
   const [search, setSearch] = useState('');
   const estado="";
   const anfitriao="";
   
+    
+
+      useEffect(() => { 
+        async function consulta() {
+           setErro(false);
+           setCarregando(true);
+           try {
+             const resultado = await fetch(url);
+             if (resultado.ok) {
+               const dados: Casa = await resultado.json();
+               setDados(dados);
+               console.log(dados);
+             } else {
+               setErro(true);
+             }
+           } catch (error) {
+             setErro(true);
+           }
+           setCarregando(false);
+         }
+         consulta();
+       },[url]);
+
+
+
+
+
+
+
   
   
     useEffect(() => { 
@@ -45,34 +78,55 @@ export default function PaginaDetalhe() {
       });
       */
       
-      async function consulta() {
+      async function insert() {
+        setIdcasa(parseInt(Id));
         setErro(false);
         setCarregando(true);
         try {
-          const resultado = await fetch(url);
-          if (resultado.ok) {
-            const dados: Casa = await resultado.json();
-            setDados(dados);
-            console.log(dados);
-          } else {
+        const post: Reserva = {
+        idcasa:     idcasa,
+        checkin:    checkin,
+        checkout:    checkout,
+        nome:      nome,
+        telefone:  telefone
+
+        };
+        const resposta = await fetch(urlInsert, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(post)
+        });
+        if (resposta.ok) {
+            const dadosjson: Casa = await resposta.json();
+            console.log('Dados:');
+            console.log(dadosjson);
+        } else {
+            console.log('POST status:', resposta.status);
+            console.log('POST statusText:', resposta.statusText);
             setErro(true);
-            console.log(dados);
-          }
+        }
+        
+
         } catch (error) {
           setErro(true);
         }
         setCarregando(false);
       }
-      consulta();
-
-    },[url]);
+      insert();
+      
+    },[urlInsert]);
 
    
 
         return (
       
       <div >
-      
+      <form onSubmit={event => {
+        setUrlInsert(`http://localhost:3000/insertReserva/`);
+        event.preventDefault();
+      }}>
       {erro && <div>Ocorreu um erro!</div>}
       {carregando ? (
         <div>Carregando...</div>
@@ -95,8 +149,9 @@ export default function PaginaDetalhe() {
 
               <div className="leftPosition">
               <p className="card-text">
-                Tipo de Moradia: [casa, apartamento]
-              </p>
+                Tipo de Moradia: {dados.moradia}
+                
+              </p> 
               <p className="card-text">
                Quarto: {dados.quartos}
               </p>
@@ -129,8 +184,9 @@ export default function PaginaDetalhe() {
                   type="date" 
                   name="check-in"
                   className= "register--input"
+                  required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
                   onChange={(event)=>{
-                  //setSearch(event.target.value);
+                  setCheckin(new Date(event.target.value));
                  }}
               />
             </p>
@@ -139,10 +195,10 @@ export default function PaginaDetalhe() {
             <input 
               type="date" 
               name="check-out"
-                 
+              required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"   
               className= "register--input"
               onChange={(event)=>{
-              //setSearch(event.target.value);
+              setCheckout(new Date(event.target.value));
             }}
             />
             </p>
@@ -154,19 +210,19 @@ export default function PaginaDetalhe() {
               placeholder="Nome"
               className= "register--input"
               onChange={(event)=>{
-              //setSearch(event.target.value);
+              setNome(event.target.value);
              }}
              />
             </p>
             <p className="card-text">
             Telefone:
             <input 
-              type="text" 
+              type="Telephone" 
               name="telefone"
               placeholder="Telefone"
               className= "register--input"
               onChange={(event)=>{
-              //setSearch(event.target.value);
+              setTelefone(parseInt(event.target.value));
              }}
             />
             </p>
@@ -210,6 +266,7 @@ export default function PaginaDetalhe() {
 
       )
     )}
+   </form>
   </div>
 );
 }

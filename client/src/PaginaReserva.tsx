@@ -67,8 +67,6 @@ const [search, setSearch] = useState('');
     }
     consulta();
 
-
-
   },[url]);
 
 
@@ -83,9 +81,9 @@ return (
         <div>Carregando...</div>
       ) : (
       dados && (
-          <div>
+          <div className='table-responsive-sm'>
           
-            <table  width={'98%'} className='tblListForm'>
+            <table  width={'98%'} className='table table-striped table-sm'>
               <tr>
                 <th>Anfitrião</th>
                 <th>Local</th>
@@ -99,9 +97,10 @@ return (
               </tr>
 
               {dados.map((dados: Casa) =>{
+              
                 return(
                 
-                <tr>
+                <tr className='evenRow'>
                   <td>{dados.anfitriao}</td>
                   <td>{dados.local}</td>
                   <td>{dados.cidade}</td>
@@ -110,10 +109,11 @@ return (
                   <td>{dados.camas}</td>
                   <td>{dados.banheiros}</td>
                   <td>{dados.hospedes}</td>
+                  <td>{dados.moradia}</td>
                   <td>
 
-                  
-                   <button onClick={() => setUrl(`http://localhost:3000/deleteCasa/${Id}}`)}>Excluir</button>
+                      
+              
                     
                     
                   

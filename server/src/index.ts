@@ -1,14 +1,17 @@
 import { connect, disconnect } from 'mongoose';
 import { ObjectId } from 'mongodb';
-import express                 from 'express';
+import express, { request, response }                 from 'express';
 import cors                    from 'cors';
 import bodyparser, {json}      from 'body-parser';
 import dotenv                  from 'dotenv';
 import morgan                  from 'morgan';
 import { CasaModel }           from './casa';
 import { ReservaModel }        from './reservas';
-import { TipoAcomodacaoModel } from './tipo-acomodacao';
 import { Result }          from 'express-validator';
+import * as uploadUser from './middlewares/uploadImage';
+
+//npm i formidable
+//npm i @types/formidable --save-dev
 
 //npm add express morgan nodeman ejs body-parser dotenv mongoose express-validator cors errorhandler passport jsonwebtoken passport-local passport-jwt
 //npm i @types/express --save-dev
@@ -20,13 +23,22 @@ import { Result }          from 'express-validator';
 //npm i jest
 //npm i express-validator
 
+//https://www.thecodebuzz.com/mongodb-query-with-like-start-with-or-end-with-guidelines/
+
 async function main(){
     try{
         const app = express();
         app.use(express.json());
-        app.use(cors());
+        //todas origens
+        app.use(cors({
+          origin: "*",
+        }));
+
+        
+      
         app.use(morgan('tiny'));
         app.use(bodyparser.urlencoded({extended:true}));
+        
         
         dotenv.config({path:'.env'});
         const port = process.env.port || 3000;
@@ -40,25 +52,63 @@ async function main(){
             console.log(`Servidor na porta ${port}`);
         })
 
-        app.post("/insertTipoAcomodacao/", async (req, res) => {
-            const dsacomodacao = req.body.dsacomodacao;
-            const resultado = await TipoAcomodacaoModel.create({
-                dsacomodacao:   dsacomodacao
-             });         
-            console.log('Inserido!');
-            console.log(resultado);
-            res.send(`Inserção TipoAcomodação -> dsacomodacao: ${req.body.dsacomodacao}`)
-         });    
+        //imagem
+       
+        app.use((req, res, next) => {
+          res.header("Access-Control-Allow-Origin", "*");
+          res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+          res.header("Access-Control-Allow-Headers", "X-PINGOTHER, Content-Type, Authorization");
+          app.use(cors());
+          next();
+          });
+         // strict-origin-when-cross-origin
+
+         app.post('/', (req, res, next) => {
+          const formidable = require('formidable');
+          const fs = require('fs');
+          const form = new formidable.IncomingForm();
+        
+          form.parse(req, (err: any, fields: any, files: { filetoupload: { path: any; name: any; }; }) => {
+        
+            const path = require('path');
+            const oldpath = files.filetoupload.path;
+            const newpath = path.join(__dirname, '..', files.filetoupload.name);
+            
+            fs.renameSync(oldpath, newpath);
+            res.send('File uploaded and moved!');
+          });
+        });
+         
+        app.post("/upload-image/",uploadUser.default.single('image'), async (req, res) => {
+
+          if (req.file) {
+              //console.log(req.file);
+              return res.json({
+                  erro: false,
+                  mensagem: "Upload realizado com sucesso!"
+              });
+          }
+      
+          return res.status(400).json({
+              erro: true,
+              mensagem: "Erro: Upload não realizado com sucesso, necessário enviar uma imagem PNG ou JPG!"
+          });
+        });
+
+          
 
         app.post("/insertReserva/", async (req, res) => {
             const idcasa = req.body.idcasa;
             const checkin = req.body.checkin;
             const checkout = req.body.checkout;
             const nome = req.body.nome;
-            const telefone = req.body.telefone;  
-    
+            const telefone = req.body.telefone; 
+            
+            //const  id = new ObjectId(idcasa);
+            let casa = await CasaModel.findById({_id: new ObjectId(idcasa)});
+
             const resultado = await ReservaModel.create({
-                idcasa:   idcasa,
+                idcasa:   casa,
                 checkin:    checkin,
                 checkout:    checkout,
                 nome:      nome,
@@ -78,6 +128,7 @@ async function main(){
             const camas = req.body.camas;
             const banheiros = req.body.banheiros;
             const hospedes = req.body.hospedes;
+            const moradia = req.body.moradia;
     
             const resultado = await CasaModel.create({
                 anfitriao: anfitriao,
@@ -87,7 +138,8 @@ async function main(){
                 quartos: quartos,
                 camas: camas,
                 banheiros: banheiros,
-                hospedes: hospedes
+                hospedes: hospedes,
+                moradia: moradia
              });
             console.log('Inserido!');
             console.log(resultado);
@@ -105,7 +157,7 @@ async function main(){
          console.log(Result);
          });
 
-         app.get("/readReserva/", async (req, res)=>{
+        app.get("/readReserva/", async (req, res)=>{
             ReservaModel.find({}, (err, result)=>{
                 if(err){
                   res.send(err);
@@ -114,11 +166,12 @@ async function main(){
          });          
          console.log('Get Reservas!');
          console.log(Result);
-         });         
+        });         
          
-         app.get("/readAnfitriao/:search", async (req, res)=>{
+        
+        app.get("/readAnfitriao/:search", async (req, res)=>{
             const  search = req.params.search;
-            CasaModel.find({anfitriao: search}).exec( (err, result)=>{
+            CasaModel.find({anfitriao:{'$regex':`${search}`,'$options':'i'}}).exec( (err, result)=>{
                 if(err){
                   res.send(err);
                 }
@@ -126,11 +179,11 @@ async function main(){
             });                   
          console.log('GetTodos Anfitriao com parâmetro!');
          console.log(Result);
-         });
+        });
 
-         app.get("/readEstado/:search", async (req, res)=>{
+        app.get("/readEstado/:search", async (req, res)=>{
             const  search = req.params.search;
-            CasaModel.find({estado: search}).exec( (err, result)=>{
+            CasaModel.find({estado:{'$regex':`${search}`,'$options':'i'}}).exec( (err, result)=>{
                 if(err){
                   res.send(err);
                 }
@@ -138,11 +191,11 @@ async function main(){
             });                   
          console.log('GetTodos Estados com parâmetro!');
          console.log(Result);
-         });
+        });
 
-         app.get("/readLocal/:search", async (req, res)=>{
+        app.get("/readLocal/:search", async (req, res)=>{
             const  search = req.params.search;
-            CasaModel.find({local: search}).exec( (err, result)=>{
+            CasaModel.find({local:{'$regex':`${search}`,'$options':'i'}}).exec( (err, result)=>{
                 if(err){
                   res.send(err);
                 }
@@ -150,11 +203,11 @@ async function main(){
             });                   
          console.log('GetTodos Local!');
          console.log(Result);
-         });
+        });
         
-         app.get("/readCidade/:search", async (req, res)=>{
+        app.get("/readCidade/:search", async (req, res)=>{
             const  search = req.params.search;
-            CasaModel.find({cidade: search}).exec( (err, result)=>{
+            CasaModel.find({cidade:{'$regex':`${search}`,'$options':'i'}}).exec( (err, result)=>{
                 if(err){
                   res.send(err);
                 }
@@ -162,9 +215,9 @@ async function main(){
             });                   
          console.log('Get por cidade!');
          console.log(Result);
-         });
+        });
         
-         app.get("/readQuartos/:search", async (req, res)=>{
+        app.get("/readQuartos/:search", async (req, res)=>{
             const  search = req.params.search;
             CasaModel.find({quartos: parseInt(search)}).exec( (err, result)=>{
                 if(err){
@@ -174,9 +227,9 @@ async function main(){
             });                   
          console.log('Get por quartos!');
          console.log(Result);
-         });
+        });
         
-         app.get("/readCamas/:search", async (req, res)=>{
+        app.get("/readCamas/:search", async (req, res)=>{
             const  search = req.params.search;
             CasaModel.find({camas: parseInt(search)}).exec( (err, result)=>{
                 if(err){
@@ -186,9 +239,9 @@ async function main(){
             });                   
          console.log('Get por camas!');
          console.log(Result);
-         });
+        });
         
-         app.get("/readBanheiros/:search", async (req, res)=>{
+        app.get("/readBanheiros/:search", async (req, res)=>{
             const  search = req.params.search;
             CasaModel.find({banheiros: parseInt(search)}).exec( (err, result)=>{
                 if(err){
@@ -198,9 +251,9 @@ async function main(){
             });                   
          console.log('Get por banheiros!');
          console.log(Result);
-         });
+        });
         
-         app.get("/readHospedes/:search", async (req, res)=>{
+        app.get("/readHospedes/:search", async (req, res)=>{
             const  search = req.params.search;
             CasaModel.find({hospedes: parseInt(search)}).exec( (err, result)=>{
                 if(err){
@@ -210,11 +263,10 @@ async function main(){
             });                   
          console.log('Get por hospedes!');
          console.log(Result);
-         });
+        });
 
-         app.get("/readCasa/:Id/", async (req, res)=>{
+        app.get("/readCasa/:Id/", async (req, res)=>{
           const  id = req.params.Id;
-          console.log(`Valor recebido do client:${id}:`)
           CasaModel.findById({_id: new ObjectId(id)}).exec((err, result) => {
               if(err){
                 res.send(err);
@@ -223,16 +275,16 @@ async function main(){
           });                   
        console.log('Get por Casa ID!');
        console.log(Result);
-       });
+        });
 
-       app.get("/readCasaCount/", async (req,res)=>{
+        app.get("/readCasaCount/", async (req,res)=>{
         CasaModel.find().countDocuments().exec((err, result)=>{
            res.send(result);
         });
         console.log(Result);
-       })
+        })
 
-       app.get("/deleteCasa/:Id", async (req, res)=>{
+        app.get("/deleteCasa/:Id", async (req, res)=>{
         const  id = req.params.Id;
         //CasaModel.deleteOne({ _id : new ObjectId('61688ef26e1a81282ac2a1ef')})
         CasaModel.deleteOne({ _id : new ObjectId(id)}).exec((err, result) => {
@@ -296,6 +348,10 @@ async function main(){
 }
 main();
 function _id(_id: any, arg1: { $eq: ObjectId; }) {
+  throw new Error('Function not implemented.');
+}
+
+function NexFunction(request: express.Request<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>, response: any, NexFunction: any) {
   throw new Error('Function not implemented.');
 }
 

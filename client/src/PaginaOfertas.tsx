@@ -58,6 +58,7 @@ export default function PaginaOfertas() {
           break;
           case 'Tudo':
             setUrl(`http://localhost:3000/readCasa/`);
+            
           break;
           case 'Local':
             setUrl(`http://localhost:3000/readLocal/${search}`);
@@ -92,9 +93,11 @@ export default function PaginaOfertas() {
               className="form-check-input"
               type="radio"
               name="inlineRadioOptions"
-              id="inlineRadio1"
+              id="tudo"
               value="Tudo"
-              onChange={event => setRadio(event.target.value)}
+              onChange={
+               // document.getElementById('tudo').disabled = true;
+                event => setRadio(event.target.value)}
             />
             <label className="form-check-label" >Tudo</label>
           </div>
@@ -184,8 +187,9 @@ export default function PaginaOfertas() {
           </div>
 
           <input 
-            type="text" 
+            type="search" 
             name="valor"
+            id='search'
             placeholder="Pesquise aqui"
             className= "register--input"
             onChange={(event)=>{

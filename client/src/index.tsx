@@ -10,6 +10,7 @@ import PaginaOfertas from './PaginaOfertas';
 import PaginaReserva from './PaginaReserva';
 
 import PaginaCadastro from './PaginaCadastro';
+import Upload from './upload';
 import PaginaDetalheOferta from './PaginaDetalheOferta';
 import PaginaSobre from './PaginaSobre';
 import reportWebVitals from './reportWebVitals';
@@ -27,6 +28,7 @@ ReactDOM.render(
           <Route path="cadastro" element={<PaginaCadastro />} />
           <Route path="detalhe/:id" element={<PaginaDetalheOferta />} />
           <Route path="sobre" element={<PaginaSobre />} />
+          <Route path="upload" element={<Upload />} />
           
           <Route path="*" element={<PaginaNaoEcontrada />} />
         </Route>

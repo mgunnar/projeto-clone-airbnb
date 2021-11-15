@@ -15,6 +15,7 @@ export default function PaginaCadastro() {
   const [camas, setCamas] = useState(0);
   const [banheiros, setBanheiros] = useState(0);
   const [hospedes, setHospedes] = useState(0);
+  const [moradia, setMoradia] = useState('');
   
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState(false);
@@ -34,7 +35,8 @@ export default function PaginaCadastro() {
         quartos: quartos,
         camas: camas,
         banheiros: banheiros,
-        hospedes: hospedes
+        hospedes: hospedes,
+        moradia: moradia
 
         };
         const resposta = await fetch(url, {
@@ -143,8 +145,19 @@ export default function PaginaCadastro() {
 
         <div className="leftPosition">
         <p className="card-text">
-          Tipo de Moradia: [casa, apartamento]
-        </p>
+                Tipo de Moradia:
+               
+
+                <input 
+          type="text" 
+          name="moradia"
+          placeholder="Tipo de moradia[Casa, Apartamento, Cabana]"
+          className= "register--input"
+          onChange={(event)=>{
+            setMoradia((event.target.value));
+          }}
+        />
+              </p> 
         <p className="card-text">
          Quarto: 
 
@@ -191,7 +204,7 @@ export default function PaginaCadastro() {
           placeholder="Hóspedes"
           className= "register--input"
           onChange={(event)=>{
-            setBanheiros(parseInt(event.target.value));
+            setHospedes(parseInt(event.target.value));
           }}
         />
         </p>

@@ -11,6 +11,7 @@ export interface Casa {
     camas:      number;
     banheiros:  number;
     hospedes:   number;
+    moradia: string;
 }
 
 const CasaSchema = new Schema<Casa>({
@@ -22,7 +23,8 @@ const CasaSchema = new Schema<Casa>({
     quartos:    {type: Number, required: true},
     camas:      {type: Number, required: true},
     banheiros:  {type: Number, required: true},
-    hospedes:   {type: Number, required: true}
+    hospedes:   {type: Number, required: true},
+    moradia:   {type: String, required: true}
 });
 
 export const CasaModel = model<Casa>('Casa', CasaSchema, 'casas');
