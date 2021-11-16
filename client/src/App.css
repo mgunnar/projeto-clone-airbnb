@@ -3,14 +3,27 @@
 }
 
 .app--container{
-  display: center;
-  margin-left: 110px;
+  align-items: center;
   flex-direction: column;
+  margin-left: 100px;
 }
 
+.app--containerBlock{
+  align-items: right;
+
+}
+.oddRow {
+  background-color: #B3E8FF;
+  font-size: 12px;
+  color: #101010;
+  text-align: left;
+}
+.evenRow {
+  font-size: 12px;
+  color: #101010;
+}
 .container{
-  margin-left: auto;
-  margin-right: auto;
+  align-items: center;
   border-radius: 50%;
 }
 
@@ -31,11 +44,11 @@
   font-family: monospace;
 }
 
-
-.card-title{
-  background-color: #555;
-  color: white;
+.card-caption{
+  
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
+
 
 
 footer
@@ -87,8 +100,24 @@ nav{
 main{
   margin-top: 5px;
   padding-top: 50px;
-  margin-bottom: 10px;
+  margin-bottom: 100px;
+  margin-left: 30px;
   
+}
+
+.leftPosition{
+  display: inline-block;
+  text-align: left;
+  padding: 10px;
+        
+}
+
+.rightPosition{
+  
+ display: inline-block;
+ text-align: left;
+ padding: 10px;
+ float: auto;
 }
 
 .App-logo {

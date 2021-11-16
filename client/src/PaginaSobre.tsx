@@ -15,16 +15,16 @@ export default function PaginaSobre() {
                    
                   </ul>
                   <ul>
-                    Crud de ofertas
-                  </ul>
-                  <ul>
                     Listagem de ofertas
                   </ul>
                   <ul>
-                    Solicitação de reserva
+                    Reservar uma oferta
                   </ul>
                   <ul>
-                    Aprovação de reserva
+                    Edição de Reserva
+                  </ul>
+                  <ul>
+                    Cadastro de Oferta
                   </ul>
                 </p>
               </div>

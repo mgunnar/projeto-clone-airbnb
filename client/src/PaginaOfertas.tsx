@@ -1,14 +1,16 @@
 import React, {useState, useEffect} from 'react';
-import Axios from "axios";
 import './App.css';
 import {Casa} from './dtos';
-
+import { Route,useParams, useNavigate } from 'react-router-dom'
 
 export default function PaginaOfertas() {
-  //const imgs: string = "https://imoveisvaledosinos.com.br/wp-content/uploads/mercado-publico.jpg";
-  //const radios: string = "Local, Cidade, Quartos, Camas, Banheiros, Hospedes";
+  let parametros = useParams();
+    let Id = parametros.id!;
+    let navigate = useNavigate();
   const [dados, setDados] = useState<Casa>();
 
+  const [anfitriao, setAnfitriao] = useState('');
+  const [estado, setEstado] = useState('');
   const [local, setLocal] = useState('');
   const [cidade, setCidade] = useState('');
   const [quartos, setQuartos] = useState(0);
@@ -20,17 +22,10 @@ export default function PaginaOfertas() {
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState(false);
   const [url, setUrl] = useState('http://localhost:3000/readCasa/');
-
-  
-  
+  const [search, setSearch] = useState('');
   
     useEffect(() => { 
-     /*
-      Axios.get(`http://localhost:3000/readLocal/`).then((response) =>{ 
-        setListaResultado(response.data);
-      });
-      */
-      async function consultarLocal() {
+     async function consulta() {
         setErro(false);
         setCarregando(true);
         try {
@@ -47,188 +42,202 @@ export default function PaginaOfertas() {
         }
         setCarregando(false);
       }
-      consultarLocal();
-
-    },[]);
-
+      consulta();
+    },[url]);
   
-    const insert = () => {
-      Axios.get(`http://localhost:3000/insert/`, { params: {
-        local: local,
-        cidade: cidade,
-        quartos: quartos,
-        camas: camas,
-        banheiros: banheiros,
-        hospedes: hospedes
-  
-      }});
-    };
-
-  
-    return (
-
-<>
-  
-<form onSubmit={event => {
-
+  return (
+    <>
+      <div className="app--containerBlock">
+      <form onSubmit={event => {
         switch(radio){
-          case 'Local':
+          case 'Anfitriao':
+            setUrl(`http://localhost:3000/readAnfitriao/${search}`);
+          break;
+          case 'Estado':
+            setUrl(`http://localhost:3000/readEstado/${search}`);
+          break;
+          case 'Tudo':
             setUrl(`http://localhost:3000/readCasa/`);
+            
+          break;
+          case 'Local':
+            setUrl(`http://localhost:3000/readLocal/${search}`);
           break;
           case 'Cidade':
-            setUrl(`http://localhost:3000/readCidade/`);
+            setUrl(`http://localhost:3000/readCidade/${search}`);
           break;
           case 'Quartos':
-            setUrl(`http://localhost:3000/readQuartos/`);
+            setUrl(`http://localhost:3000/readQuartos/${search}`);
           break;
           case 'Camas':
-            setUrl(`http://localhost:3000/readCamas/`);
+            setUrl(`http://localhost:3000/readCamas/${search}`);
           break;
           case 'Banheiros':
-            setUrl(`http://localhost:3000/readBanheiros/`);
+            setUrl(`http://localhost:3000/readBanheiros/${search}`);
           break;
           case 'Hospedes':
-            setUrl(`http://localhost:3000/readHospedes/`);
+            setUrl(`http://localhost:3000/readHospedes/${search}`);
           break;
           default:
-            setUrl(`http://localhost:3000/readCasa/`);
-
+            setUrl(`http://localhost:3000/readCasa/${search}`);
         }
         event.preventDefault();
       }}>
-
-<div className="app--container">
-      <div className='register--container'>
-        <h6 className ='register--title'>Buscar por: </h6>
+    
+      <div className="app--container">
+        <div className='register--container'>
+          <h6 className ='register--title'>Buscar por: </h6>
         
- <div className="form-check form-check-inline">
-  <input
-    className="form-check-input"
-    type="radio"
-    name="inlineRadioOptions"
-    id="inlineRadio1"
-    value="Local"
-    //checked={selectedOption === "Local"}
-    onChange={event => setRadio(event.target.value)}
-  />
-  <label className="form-check-label" >Local</label>
-</div>
+          <div className="form-check form-check-inline">
+            <input
+              className="form-check-input"
+              type="radio"
+              name="inlineRadioOptions"
+              id="tudo"
+              value="Tudo"
+              onChange={
+               // document.getElementById('tudo').disabled = true;
+                event => setRadio(event.target.value)}
+            />
+            <label className="form-check-label" >Tudo</label>
+          </div>
+           
+          <div className="form-check form-check-inline">
+           <input
+            className="form-check-input"
+            type="radio"
+            name="inlineRadioOptions"
+            id="inlineRadio1"
+            value="Local" 
+            onChange={event => setRadio(event.target.value)}
+           />
+           <label className="form-check-label" >Local</label>
+          </div>
  
-<div className="form-check form-check-inline">
-  <input
-    className="form-check-input"
-    type="radio"
-    name="inlineRadioOptions"
-    id="inlineRadio2"
-    value="Cidade"
-    onChange={event => setRadio(event.target.value)}
-  />
-  <label className="form-check-label" >Cidade</label>
-</div>
+         <div className="form-check form-check-inline">
+            <input
+            className="form-check-input"
+            type="radio"
+            name="inlineRadioOptions"
+            id="inlineRadio2"
+            value="Cidade"
+            onChange={event => setRadio(event.target.value)}
+            />
+            <label className="form-check-label" >Cidade</label>
+          </div>
 
-<div className="form-check form-check-inline">
-  <input
-    className="form-check-input"
-    type="radio"
-    name="inlineRadioOptions"
-    id="inlineRadio3"
-    value="Quarto"
-    onChange={event => setRadio(event.target.value)}
-    
-  />
-  <label className="form-check-label" >Quarto</label>
-</div>
+          <div className="form-check form-check-inline">
+           <input
+            className="form-check-input"
+            type="radio"
+            name="inlineRadioOptions"
+            id="inlineRadio1"
+            value="Estado" 
+            onChange={event => setRadio(event.target.value)}
+           />
+           <label className="form-check-label" >Estado</label>
+          </div>
 
+          <div className="form-check form-check-inline">
+            <input
+              className="form-check-input"
+              type="radio"
+              name="inlineRadioOptions"
+              id="inlineRadio3"
+              value="Quartos"
+              onChange={event => setRadio(event.target.value)}  
+            />
+            <label className="form-check-label" >Quartos</label>
+          </div>
 
-<div className="form-check form-check-inline">
-  <input
-    className="form-check-input"
-    type="radio"
-    name="inlineRadioOptions"
-    id="inlineRadio1"
-    value="Camas"
-    onChange={event => setRadio(event.target.value)}
-  />
-  <label className="form-check-label" >Camas</label>
-</div>
+          <div className="form-check form-check-inline">
+           <input
+            className="form-check-input"
+            type="radio"
+            name="inlineRadioOptions"
+            id="inlineRadio1"
+            value="Camas"
+            onChange={event => setRadio(event.target.value)}
+           />
+           <label className="form-check-label" >Camas</label>
+          </div>
  
-<div className="form-check form-check-inline">
-  <input
-    className="form-check-input"
-    type="radio"
-    name="inlineRadioOptions"
-    id="inlineRadio2"
-    value="Banheiros"
-    onChange={event => setRadio(event.target.value)}
-  />
-  <label className="form-check-label" >Banheiros</label>
-</div>
+          <div className="form-check form-check-inline">
+           <input
+             className="form-check-input"
+             type="radio"
+             name="inlineRadioOptions"
+             id="inlineRadio2"
+             value="Banheiros"
+             onChange={event => setRadio(event.target.value)}
+            />
+            <label className="form-check-label" >Banheiros</label>
+          </div>
 
-<div className="form-check form-check-inline">
-  <input
-    className="form-check-input"
-    type="radio"
-    name="inlineRadioOptions"
-    id="inlineRadio3"
-    value="Hospedes"
-    onChange={event => setRadio(event.target.value)}
-    
-  />
-  <label className="form-check-label" >Hospedes</label>
-</div>
+          <div className="form-check form-check-inline">
+           <input
+            className="form-check-input"
+            type="radio"
+            name="inlineRadioOptions"
+            id="inlineRadio3"
+            value="Hospedes"
+            onChange={event => setRadio(event.target.value)}
+           />
+           <label className="form-check-label" >Hospedes</label>
+          </div>
 
-
-        <input 
-          type="text" 
-          name="valor"
-          placeholder="Pesquise aqui"
-          className= "register--input"
-          onChange={(event)=>{
-            setUrl(event.target.value);
+          <input 
+            type="search" 
+            name="valor"
+            id='search'
+            placeholder="Pesquise aqui"
+            className= "register--input"
+            onChange={(event)=>{
+            setSearch(event.target.value);
           }}
         />
-        
+
         <button 
-        className='register--button'
-        onClick={insert}
-        >Buscar</button>
-      </div>
-      
+          className='register--button'
+          type="submit">
+          Buscar    
+        </button>
+      </div> 
     </div>
-
-    </form>
-    
-
-
-      {erro && <div>Ocorreu um erro!</div>}
+   </form>
+      {erro && <div>Não encontramos itens!</div>}
       {carregando ? (
         <div>Carregando...</div>
       ) : (
         dados && (
-          
-    <div className="container">
-       <div className="row">
-        
-      {dados.map((dados: Casa) =>{
-      return (
-      
-      <div className="col">
-          <div className="card" style={{width: 300}}>
-            <div className="card-body">
-              <h5 className="card-title">{dados.local}</h5>
-              <h6 className="card-subtitle mb-2 text-muted">{dados.cidade}</h6>
-              <p className="card-text">
-               <a href="#" className="card-link"><img src={dados.local} width="270px" height="220px"/></a>
-              </p>
+         <div className="container">
+            <div className="row">
+              {dados.map((dados: Casa) =>{
+                return (
+                  <div className="col" onClick={() => {
+                    navigate(`/detalhe/${dados._id}`);
+                    }}>
+                    <div className="card" style={{width: 300}}>
+                      <div className="card-body">
+                        <h5 className="card-title">{dados.local}</h5>
+                        <h6 className="card-subtitle mb-2 text-muted">{dados.cidade}</h6>
+                        <p className="card-text">
+                          <a href=''><img src={dados.local} width="270px" height="220px" onClick={() => {
+                             navigate(`/detalhe/${dados._id}`);
+                          }}/>
+                          </a>
+                          
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
-          </div>
-          </div>
-            )
-          })}
-          </div>
           </div>
         )
       )}
+      </div>
     </>
   );
 }

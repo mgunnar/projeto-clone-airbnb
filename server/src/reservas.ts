@@ -1,23 +1,24 @@
-import { model, Schema } from 'mongoose';
+import { ObjectId } from 'bson';
+import { model, Schema, SchemaTypes } from 'mongoose';
+import {Casa} from './casa';
 //npm add mongoose
 
-export interface reserva {
-    local:      string;
-    cidade:     string;
-    quartos:    number;
-    camas:      number;
-    banheiros:  number;
-    hospedes:   number;
+//alterações Matheus
+export interface reserva extends Casa {
+    idcasa:      Casa[];
+    checkin:     Date;
+    checkout:    Date;
+    nome:      string;
+    telefone:  number
 }
-
+//alterações Matheus
 const reservaSchema = new Schema<reserva>({
-    local:      {type: String, required: true},
-    cidade:     {type: String, required: true},
-    quartos:    {type: Number, required: true}, 
-    camas:      {type: Number, required: true}, 
-    banheiros:  {type: Number, required: true},
-    hospedes:   {type: Number, required: true}
+    idcasa:      [{ type: SchemaTypes.ObjectId,  ref: 'Casa' }],
+    checkin:     {type: Date, required: true},
+    checkout:    {type: Date, required: true},
+    nome:      {type: String, required: true},
+    telefone:      {type: Number, required: true}
 }
 );
 
-export const reservaModel = model<reserva>('reserva', reservaSchema, 'reservas');
+export const ReservaModel = model<reserva>('reserva', reservaSchema, 'reservas');
