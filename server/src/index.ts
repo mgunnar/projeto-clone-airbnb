@@ -1,29 +1,32 @@
 import { connect, disconnect } from 'mongoose';
-import { ObjectId } from 'mongodb';
-import express, { request, response }                 from 'express';
+import { ObjectId }            from 'mongodb';
+import express, { request, response } from 'express';
 import cors                    from 'cors';
 import bodyparser, {json}      from 'body-parser';
 import dotenv                  from 'dotenv';
 import morgan                  from 'morgan';
 import { CasaModel }           from './casa';
 import { ReservaModel }        from './reservas';
-import { Result }          from 'express-validator';
-import * as uploadUser from './middlewares/uploadImage';
+import { Result }              from 'express-validator';
+import * as uploadUser         from './middlewares/uploadImage';
 
-//npm i formidable
-//npm i @types/formidable --save-dev
+/*PACOTES: 
+  npm i formidable
+  npm i @types/formidable --save-dev
+  npm add express morgan nodeman ejs body-parser dotenv mongoose express-validator cors errorhandler passport jsonwebtoken passport-local passport-jwt
+  npm i @types/express --save-dev
+  npm i node-fetch@cjs
+  npm i @types/node-fetch@2.5.12 --save-dev
+  npm i ts-node --save-dev
+  npm i @types/node -D
+  npm i supertest
+  npm i jest
+  npm i express-validator
+*/
 
-//npm add express morgan nodeman ejs body-parser dotenv mongoose express-validator cors errorhandler passport jsonwebtoken passport-local passport-jwt
-//npm i @types/express --save-dev
-//npm i node-fetch@cjs
-//npm i @types/node-fetch@2.5.12 --save-dev
-//npm i ts-node --save-dev
-//npm i @types/node -D
-//npm i supertest
-//npm i jest
-//npm i express-validator
-
-//https://www.thecodebuzz.com/mongodb-query-with-like-start-with-or-end-with-guidelines/
+/*REFERÊNCIAS: 
+  https://www.thecodebuzz.com/mongodb-query-with-like-start-with-or-end-with-guidelines/
+*/
 
 async function main(){
     try{
@@ -34,16 +37,12 @@ async function main(){
           origin: "*",
         }));
 
-        
-      
         app.use(morgan('tiny'));
-        app.use(bodyparser.urlencoded({extended:true}));
-        
-        
+        app.use(bodyparser.urlencoded({extended:true}));        
         dotenv.config({path:'.env'});
         const port = process.env.port || 3000;
-       // const url='mongodb+srv://fabio:2010@cluster0.u9ema.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
-        const url = 'mongodb+srv://adminprojeto:senhasenha.123@banco-projeto-airbnb.mw94s.mongodb.net/bancocloneairbnb00?retryWrites=true&w=majority';
+        const url = process.env.MONGO_URL || '';
+        const server = process.env.DB_HOST;
         
          await connect(url);
          console.log('Conectado!');
@@ -52,37 +51,17 @@ async function main(){
             console.log(`Servidor na porta ${port}`);
         })
 
-        //imagem
-       
         app.use((req, res, next) => {
           res.header("Access-Control-Allow-Origin", "*");
           res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
           res.header("Access-Control-Allow-Headers", "X-PINGOTHER, Content-Type, Authorization");
           app.use(cors());
           next();
-          });
-         // strict-origin-when-cross-origin
-
-         app.post('/', (req, res, next) => {
-          const formidable = require('formidable');
-          const fs = require('fs');
-          const form = new formidable.IncomingForm();
-        
-          form.parse(req, (err: any, fields: any, files: { filetoupload: { path: any; name: any; }; }) => {
-        
-            const path = require('path');
-            const oldpath = files.filetoupload.path;
-            const newpath = path.join(__dirname, '..', files.filetoupload.name);
-            
-            fs.renameSync(oldpath, newpath);
-            res.send('File uploaded and moved!');
-          });
         });
          
         app.post("/upload-image/",uploadUser.default.single('image'), async (req, res) => {
 
           if (req.file) {
-              //console.log(req.file);
               return res.json({
                   erro: false,
                   mensagem: "Upload realizado com sucesso!"
@@ -95,8 +74,6 @@ async function main(){
           });
         });
 
-          
-
         app.post("/insertReserva/", async (req, res) => {
             const idcasa = req.body.idcasa;
             const checkin = req.body.checkin;
@@ -104,11 +81,11 @@ async function main(){
             const nome = req.body.nome;
             const telefone = req.body.telefone; 
             
-            //const  id = new ObjectId(idcasa);
-            let casa = await CasaModel.findById({_id: new ObjectId(idcasa)});
+            //let casa = await CasaModel.findById({_id: new ObjectId(idcasa)});
+            const  id = new ObjectId(idcasa);
 
             const resultado = await ReservaModel.create({
-                idcasa:   casa,
+                idcasa:   id,
                 checkin:    checkin,
                 checkout:    checkout,
                 nome:      nome,
@@ -117,7 +94,7 @@ async function main(){
             console.log('Inserido!');
             console.log(resultado);
             res.send(`Inserção Reserva -> checkin: ${req.body.checkin}, Checkout: ${req.body.checkout}, Nome: ${req.body.nome}`)
-         });    
+        });    
 
         app.post("/insertCasa/", async (req, res) => {
             const anfitriao= req.body.anfitriao;
@@ -140,9 +117,10 @@ async function main(){
                 banheiros: banheiros,
                 hospedes: hospedes,
                 moradia: moradia
-             });
+            });
             console.log('Inserido!');
             console.log(resultado);
+            response.redirect(`/cadastro`);
             res.send(`Inserção Casa: Local: ${req.body.local}, Cidade: ${req.body.cidade}, Quartos: ${req.body.quartos}`)
         });
     
@@ -155,20 +133,33 @@ async function main(){
          });          
          console.log('GetTodos!');
          console.log(Result);
-         });
+        });
 
         app.get("/readReserva/", async (req, res)=>{
-            ReservaModel.find({}, (err, result)=>{
-                if(err){
-                  res.send(err);
-                }
-                res.send(result);
-         });          
-         console.log('Get Reservas!');
-         console.log(Result);
+          const document = ReservaModel.aggregate([{
+            $lookup: 
+              {
+                from: "casa",
+                localField: "idcasa",
+                foreignField: "_id",
+                as: "reservas"
+              }
+          }]);
+          res.send(document);   
+          console.log('Get Reservas!');
+          console.log(Result);
+
+          /*
+          ReservaModel.find({}, (err, result)=>{
+            if(err){
+              res.send(err);
+            }
+            res.send(result);
+          });          
+            console.log('GetTodos!');
+            console.log(Result);*/
         });         
-         
-        
+             
         app.get("/readAnfitriao/:search", async (req, res)=>{
             const  search = req.params.search;
             CasaModel.find({anfitriao:{'$regex':`${search}`,'$options':'i'}}).exec( (err, result)=>{
@@ -278,26 +269,87 @@ async function main(){
         });
 
         app.get("/readCasaCount/", async (req,res)=>{
-        CasaModel.find().countDocuments().exec((err, result)=>{
+        CasaModel.find().countDocuments().exec((err, result)=> {
            res.send(result);
         });
         console.log(Result);
         })
 
-        app.get("/deleteCasa/:Id", async (req, res)=>{
+        app.get("/deleteCasa/:Id/", async (req, res)=>{
         const  id = req.params.Id;
+        CasaModel.findOneAndRemove({id: id}).exec((err, result)=> {
+          if (err){
+              console.log(err)
+          }
+          else{
+              console.log("Deleted Casa ID: ", result);
+          }
+          });
+        });
+
+        app.post("/updateCasa/:Id", async (req, res)=>{
+          const  id = req.params.Id;
+          const anfitriao= req.body.anfitriao;
+            const estado = req.body.estado;
+            const local = req.body.local;
+            const cidade = req.body.cidade;
+            const quartos = req.body.quartos;
+            const camas = req.body.camas;
+            const banheiros = req.body.banheiros;
+            const hospedes = req.body.hospedes;
+            const moradia = req.body.moradia;
+    
+            const resultado = await CasaModel.updateOne(
+              { _id: new ObjectId(id) }, // Documento que deseja alterar
+              { $set: { 
+                anfitriao: anfitriao,
+                estado: estado,
+                local: local,
+                cidade: cidade,
+                quartos: quartos,
+                camas: camas,
+                banheiros: banheiros,
+                hospedes: hospedes,
+                moradia: moradia
+                } 
+              } // O que deseja alterar do documento, neste caso a idade que era 19, agora será atualizada para 18    
+            )
+            console.log("Deleted Reserva ID: ", resultado);
+          
+          
+          });
+  
+        app.get("/deleteReserva/:Id/", async (req, res)=>{
+          const  id = req.params.Id;
+          ReservaModel.findOneAndRemove({id: id}).exec((err, result)=> {
+            if (err){
+                console.log(err)
+            }
+            else{
+                console.log("Deleted Reserva ID: ", result);
+            }
+            });
+          });
+      /*
         //CasaModel.deleteOne({ _id : new ObjectId('61688ef26e1a81282ac2a1ef')})
-        CasaModel.deleteOne({ _id : new ObjectId(id)}).exec((err, result) => {
+        CasaModel.findOne({ _id : id}).exec((err, result) => {
           if(err){
             res.send(err);
           }
+        CasaModel.remove();
           res.send(result);
         });                   
-          console.log('Delete por Casa ID!');
-          console.log(Result);
+          console.log('Delete Casa ID!');
+         // console.log(`result);
         });
-      
+      */
         /*
+
+        Person.findOne({_id: req.params.id}, function (error, person){
+        console.log("This object will get deleted " + person);
+        person.remove();
+
+    });
         ProdutoModel.findById('169c9130052a4d695b28229')
          //2 - BUSCAR
          const produtos = await ProdutoModel.find().exec();
@@ -337,7 +389,6 @@ async function main(){
          })
 
          */
-
     }catch(error){
         console.log('Falha de acesso!');
         console.log(error);
@@ -346,6 +397,7 @@ async function main(){
         //console.log('Desconectado do mongodb Atlas!');
     }
 }
+
 main();
 function _id(_id: any, arg1: { $eq: ObjectId; }) {
   throw new Error('Function not implemented.');

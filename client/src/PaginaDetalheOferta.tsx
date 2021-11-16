@@ -37,11 +37,7 @@ export default function PaginaDetalhe() {
   const [url, setUrl] = useState(`http://localhost:3000/readCasa/${Id}`);
   const [urlInsert, setUrlInsert] = useState(url);
   const [search, setSearch] = useState('');
-  const estado="";
-  const anfitriao="";
-  
     
-
       useEffect(() => { 
         async function consulta() {
            setErro(false);
@@ -63,33 +59,18 @@ export default function PaginaDetalhe() {
          consulta();
        },[url]);
 
-
-
-
-
-
-
-  
-  
     useEffect(() => { 
-     /*
-      Axios.get(`http://localhost:3000/readLocal/`).then((response) =>{ 
-        setListaResultado(response.data);
-      });
-      */
-      
       async function insert() {
         setIdcasa(parseInt(Id));
         setErro(false);
         setCarregando(true);
         try {
-        const post: Reserva = {
-        idcasa:     idcasa,
-        checkin:    checkin,
-        checkout:    checkout,
-        nome:      nome,
-        telefone:  telefone
-
+          const post: Reserva = {
+          idcasa:     idcasa,
+          checkin:    checkin,
+          checkout:    checkout,
+          nome:      nome,
+          telefone:  telefone
         };
         const resposta = await fetch(urlInsert, {
             method: 'POST',
@@ -99,7 +80,7 @@ export default function PaginaDetalhe() {
             body: JSON.stringify(post)
         });
         if (resposta.ok) {
-            const dadosjson: Casa = await resposta.json();
+            const dadosjson: Reserva = await resposta.json();
             console.log('Dados:');
             console.log(dadosjson);
         } else {
@@ -107,27 +88,21 @@ export default function PaginaDetalhe() {
             console.log('POST statusText:', resposta.statusText);
             setErro(true);
         }
-        
-
         } catch (error) {
           setErro(true);
         }
         setCarregando(false);
       }
       insert();
-      
     },[urlInsert]);
 
-   
-
-        return (
-      
-      <div >
+  return (
+   <div >
       <form onSubmit={event => {
         setUrlInsert(`http://localhost:3000/insertReserva/`);
         event.preventDefault();
       }}>
-      {erro && <div>Ocorreu um erro!</div>}
+      {erro && <div></div>}
       {carregando ? (
         <div>Carregando...</div>
       ) : (
