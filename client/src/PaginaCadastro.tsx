@@ -3,15 +3,17 @@ import './App.css';
 import {Casa} from './dtos';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css'; 
+import { useNavigate, useParams } from 'react-router';
+
 //npm i react-toastify
 //https://wbruno.com.br/html/validando-formularios-apenas-com-html5/
 
 export default function PaginaCadastro() {
+  let navigate = useNavigate();
   const imgs: string = "https://imoveisvaledosinos.com.br/wp-content/uploads/mercado-publico.jpg";
   const [dados, setDados] = useState<Casa>();
   const [acao, setAcao] = useState('tabela');
   const [Id, setId] = useState('0');
-
 
   const [anfitriao, setAnfitriao] = useState('');
   const [estado, setEstado] = useState('');
@@ -25,7 +27,7 @@ export default function PaginaCadastro() {
   
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState(false);
-  const [url, setUrl] = useState('http://localhost:3000/readCasa/');
+  const [url, setUrl] = useState(`http://localhost:3000/readCasa/`);
   const [urlInsertUpdate, setUrlInsertUpdate] = useState(url);
   const [search, setSearch] = useState('');
 
@@ -99,7 +101,7 @@ export default function PaginaCadastro() {
         }
         setCarregando(false);
       }
-      setUrl('http://localhost:3000/readCasa/');
+      //setUrl(`${servidor}/readCasa/');
       insertUpdate();
 
     },[urlInsertUpdate]);
@@ -111,8 +113,11 @@ export default function PaginaCadastro() {
 <div className="row">
 
 
+
+
 {(acao=='tabela') &&
  dados && (
+  
 
 <div>
   <form onSubmit={event => {
@@ -143,7 +148,7 @@ export default function PaginaCadastro() {
               </tr>
 
               {dados.map((dados: Casa) =>{
-              const idparams = dados._Id;
+
                 return(
                  
                 <tr className='evenRow'>
@@ -152,22 +157,26 @@ export default function PaginaCadastro() {
                   <td scope="row">{dados.cidade}</td>
                   <td scope="row">{dados.estado}</td>
                   <td scope="row">
-                  <form onSubmit={event => {
-                     setAcao('alterar');
-                     setUrl(`http://localhost:3000/readCasa/${dados._Id}/`);
-                      event.preventDefault();
+                 {/**<form onSubmit={event => {
+                     
+                      navigate(`/detalhe/${dados._id}`);
                   }}
                   style={
                     { 
                       float: 'left' , 
                       display: 'inline-block'
-                    }}>
+                    }}> */}
+                  
                   <button
                     className='btn btn-warning'
-                    type="submit">
+                    
+                    onClick={() => {
+                      navigate(`/cadastroEdicao/${dados._id}`);
+                   }}>
                     Editar
+                  
                   </button>
-                  </form>
+                  
                   <form onSubmit={event => {
                       setAcao('tabela')
                       setUrl(`http://localhost:3000/deleteCasa/${dados._Id}/`);
@@ -205,7 +214,7 @@ export default function PaginaCadastro() {
 
 {(acao=='inserir') && (
   <form onSubmit={event => {
-    setAcao('tabela');
+     setAcao('tabela');
      setUrlInsertUpdate(`http://localhost:3000/insertCasa/`);
      event.preventDefault();
 }}>
@@ -222,7 +231,7 @@ export default function PaginaCadastro() {
           <input 
           type="text" 
           name="local"
-          value={(dados)? dados.local:''}
+          
           className= "form-control"
           onChange={(event)=>{
             setLocal(event.target.value);
@@ -236,7 +245,7 @@ export default function PaginaCadastro() {
           <input 
           type="text" 
           name="cidade"
-          value={(dados)? dados.cidade:''}
+          
           className= "form-control"
           onChange={(event)=>{
             setCidade(event.target.value);
@@ -252,7 +261,7 @@ export default function PaginaCadastro() {
           <input 
           type="text" 
           name="estado"
-          value={(dados)? dados.estado:''}
+          
           className= "form-control"
           onChange={(event)=>{
             setEstado(event.target.value);
@@ -268,7 +277,7 @@ export default function PaginaCadastro() {
           <input 
           type="text" 
           name="anfitriao"
-          value={(dados)? dados.anfitriao:''}
+          
           className= "form-control"
           onChange={(event)=>{
             setAnfitriao(event.target.value);
@@ -289,7 +298,7 @@ export default function PaginaCadastro() {
           <input 
             type="text" 
             name="moradia"
-            value={(dados)? dados.moradia:''}
+          
             className= "form-control"
             onChange={(event)=>{
             setMoradia((event.target.value));
@@ -303,7 +312,7 @@ export default function PaginaCadastro() {
          <input 
           type="text" 
           name="quartos"
-          value={dados?dados.quartos:''}
+          
           className= "form-control"
           onChange={(event)=>{
             setQuartos(parseInt(event.target.value));
@@ -318,7 +327,7 @@ export default function PaginaCadastro() {
          <input 
           type="text" 
           name="camas"
-          value={dados?dados.camas:''}
+          
           className= "form-control"
           onChange={(event)=>{
             setCamas(parseInt(event.target.value));
@@ -336,7 +345,7 @@ export default function PaginaCadastro() {
          <input 
           type="text" 
           name="banheiros"
-          value={dados?dados.banheiros:''}
+          
           className= "form-control"
           onChange={(event)=>{
             setBanheiros(parseInt(event.target.value));
@@ -350,7 +359,7 @@ export default function PaginaCadastro() {
           <input 
           type="text" 
           name="hospedes"
-          value={dados?dados.hospedes:''}
+          
           className= "form-control"
           onChange={(event)=>{
             setHospedes(parseInt(event.target.value));
@@ -378,13 +387,11 @@ export default function PaginaCadastro() {
     </form>
 )}
 
-
 {(acao=='alterar') && (
-  
-  dados && (
+ dados && (
   <form onSubmit={event => {
     setAcao('tabela') 
-    setUrlInsertUpdate(`http://localhost:3000/updateCasa/${Id}/`);
+    setUrlInsertUpdate(`http://localhost:3000/${dados._Id}/`);
      event.preventDefault();
 
 }}>

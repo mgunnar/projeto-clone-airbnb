@@ -1,6 +1,7 @@
 import './App.css';
-import { Navbar, Nav } from 'react-bootstrap';
+import { Navbar, Nav} from 'react-bootstrap';
 import { NavLink, Outlet} from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 
 export default function App() {
   return (
@@ -11,7 +12,6 @@ export default function App() {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link as={NavLink} to="/ofertas">Ofertas</Nav.Link>
-            <Nav.Link as={NavLink} to="/reserva">Reserva</Nav.Link>
             <Nav.Link as={NavLink} to="/cadastro">Cadastro</Nav.Link>
             <Nav.Link as={NavLink} to="/sobre">Sobre</Nav.Link>
           </Nav>
@@ -21,6 +21,7 @@ export default function App() {
         
       </header>
       <main>
+        <ToastContainer />
         <Outlet />
       </main>
       <footer className="footer navbar-fixed-bottom">

@@ -5,8 +5,8 @@ import cors                    from 'cors';
 import bodyparser, {json}      from 'body-parser';
 import dotenv                  from 'dotenv';
 import morgan                  from 'morgan';
-import { CasaModel }           from './casa';
-import { ReservaModel }        from './reservas';
+import { CasaModel }           from './repositorio/casaModel';
+import { ReservaModel }        from './repositorio/reservasModel';
 import { Result }              from 'express-validator';
 import * as uploadUser         from './middlewares/uploadImage';
 
@@ -120,7 +120,7 @@ async function main(){
             });
             console.log('Inserido!');
             console.log(resultado);
-            response.redirect(`/cadastro`);
+            //response.redirect(`/cadastro`);
             res.send(`Inserção Casa: Local: ${req.body.local}, Cidade: ${req.body.cidade}, Quartos: ${req.body.quartos}`)
         });
     
@@ -287,7 +287,7 @@ async function main(){
           });
         });
 
-        app.post("/updateCasa/:Id", async (req, res)=>{
+        app.patch("/updateCasa/:Id/", async (req, res)=>{
           const  id = req.params.Id;
           const anfitriao= req.body.anfitriao;
             const estado = req.body.estado;
@@ -298,7 +298,29 @@ async function main(){
             const banheiros = req.body.banheiros;
             const hospedes = req.body.hospedes;
             const moradia = req.body.moradia;
-    
+
+            var myquery = { _id: new ObjectId(id) };
+            var newvalues =  { $set: { 
+            anfitriao: anfitriao,
+            estado: estado,
+            local: local,
+            cidade: cidade,
+            quartos: quartos,
+            camas: camas,
+            banheiros: banheiros,
+            hospedes: hospedes,
+            moradia: moradia
+    } 
+  }; // O que deseja alterar do documento, neste caso a idade que era 19, agora será atualizada para 18    
+   CasaModel.updateOne(myquery, newvalues).exec((err, result)=> {
+    if (err){
+        console.log(err)
+    }
+    else{
+        console.log("update Casa ID: ", result);
+    }
+    });
+    /*
             const resultado = await CasaModel.updateOne(
               { _id: new ObjectId(id) }, // Documento que deseja alterar
               { $set: { 
@@ -316,7 +338,7 @@ async function main(){
             )
             console.log("Deleted Reserva ID: ", resultado);
           
-          
+      */    
           });
   
         app.get("/deleteReserva/:Id/", async (req, res)=>{

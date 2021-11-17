@@ -10,11 +10,13 @@ import PaginaOfertas from './PaginaOfertas';
 import PaginaReserva from './PaginaReserva';
 
 import PaginaCadastro from './PaginaCadastro';
-import Upload from './upload';
+
 import PaginaDetalheOferta from './PaginaDetalheOferta';
 import PaginaSobre from './PaginaSobre';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import PaginaCadastroEdicao from './PaginaCadastroEdicao';
+import PaginaREdicao from './PaginaReserva';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -27,8 +29,10 @@ ReactDOM.render(
           <Route path="reserva" element={<PaginaReserva />} />
           <Route path="cadastro" element={<PaginaCadastro />} />
           <Route path="detalhe/:id" element={<PaginaDetalheOferta />} />
+          <Route path="cadastroEdicao/:id" element={<PaginaCadastroEdicao/>} />
+          <Route path="reservaEdicao/:id" element={<PaginaREdicao/>} />
           <Route path="sobre" element={<PaginaSobre />} />
-          <Route path="upload" element={<Upload />} />
+          
           
           <Route path="*" element={<PaginaNaoEcontrada />} />
         </Route>
