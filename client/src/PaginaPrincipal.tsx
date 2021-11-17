@@ -18,7 +18,7 @@ export default function PaginaPrincipal() {
               </div>
             </div>
           </div>
-
+{/** 
           <div className="col">
             <div className="card" style={{width: 300}}>
               <div className="card-body">
@@ -30,6 +30,7 @@ export default function PaginaPrincipal() {
               </div>
             </div>
           </div>
+          */}
 
         </div>
       </div>

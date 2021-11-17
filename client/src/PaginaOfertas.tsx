@@ -191,14 +191,13 @@ export default function PaginaOfertas() {
             name="valor"
             id='search'
             placeholder="Pesquise aqui"
-            className= "register--input"
             onChange={(event)=>{
             setSearch(event.target.value);
           }}
         />
 
         <button 
-          className='register--button'
+          className='btn btn-sm btn-primary'
           type="submit">
           Buscar    
         </button>

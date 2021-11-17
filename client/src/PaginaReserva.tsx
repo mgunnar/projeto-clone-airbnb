@@ -1,73 +1,53 @@
 import React, {useState, useEffect} from 'react';
-import Axios from "axios";
 import './App.css';
-import {Casa, Reserva} from './dtos';
-import { useParams, useNavigate } from 'react-router-dom'
-import "bootstrap/dist/css/bootstrap.css";
-import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
-import dayjs from 'dayjs';
-//npm i bootstrap
-//npm install react-bootstrap-table2-overlay
-//npm i react-bootstrap-table2-paginator --force
-//npm i react-bootstrap-table-next --force
-//npm i dayjs 
-//https://medium.com/code-prestige/manipulando-o-tempo-usando-o-day-js-2926af277dbe
+import {Reserva, Casa} from './dtos';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css'; 
+import { useNavigate, useParams } from 'react-router';
+
+//npm i react-toastify
+//https://wbruno.com.br/html/validando-formularios-apenas-com-html5/
 
 export default function PaginaReserva() {
-let parametros = useParams();
-let Idparams = parametros.id!;
-let navigate = useNavigate();
-const [dados, setDados] = useState<Reserva>();
-const [Id, setId] = useState(Idparams);
-const [refresh, setRefresh] = useState(null);
+  let navigate = useNavigate();
+  const imgs: string = "https://imoveisvaledosinos.com.br/wp-content/uploads/mercado-publico.jpg";
+  const [dados, setDados] = useState<Reserva>();
+  const [acao, setAcao] = useState('tabela');
+  const [Id, setId] = useState('0');
 
-const [anfitriao, setAnfitriao] = useState('');
-const [estado, setEstado] = useState('');
-const [local, setLocal] = useState('');
-const [cidade, setCidade] = useState('');
-const [quartos, setQuartos] = useState(0);
-const [camas, setCamas] = useState(0);
-const [banheiros, setBanheiros] = useState(0);
-const [hospedes, setHospedes] = useState(0);
+  const [anfitriao, setAnfitriao] = useState('');
+  const [estado, setEstado] = useState('');
+  const [local, setLocal] = useState('');
+  const [cidade, setCidade] = useState('');
+  const [quartos, setQuartos] = useState(0);
+  const [camas, setCamas] = useState(0);
+  const [banheiros, setBanheiros] = useState(0);
+  const [hospedes, setHospedes] = useState(0);
+  const [moradia, setMoradia] = useState('');
+  
+  const [carregando, setCarregando] = useState(false);
+  const [erro, setErro] = useState(false);
+  const [url, setUrl] = useState(`http://localhost:3000/readReserva/`);
+  const [search, setSearch] = useState('');
 
-const [carregando, setCarregando] = useState(false);
-const [erro, setErro] = useState(false);
-const [url, setUrl] = useState(`http://localhost:3000/readReserva/`);
-const [urlDelete, setUrlDelete] = useState(url);
+  
+  const success = () => toast.success('Dados enviados!');
+  const error = () => toast.error('Não foi possível!');
+  const waiting= ()=> toast.info('Carregando...');
 
-  useEffect(() => { 
-   async function consulta() {
-      setErro(false);
-      setCarregando(true);
-      try {
-        const resultado = await fetch(url);
-        if (resultado.ok) {
-          const dados: Reserva = await resultado.json();
-          setDados(dados);
-          console.log(dados);
-        } else {
-          setErro(true);
-        }
-      } catch (error) {
-        setErro(true);
-      }
-      setCarregando(false);
-    }
-    consulta();
-  },[url]);
+  
 
   useEffect(() => { 
-    async function remover() {
+    async function consulta() {
        setErro(false);
+       setCarregando(true);
        try {
-         
-         const resultado = await fetch(urlDelete);
-          if (resultado.ok) {
+         const resultado = await fetch(url);
+         if (resultado.ok) {
            const dados: Reserva = await resultado.json();
            setDados(dados);
            console.log(dados);
-           
-          } else {
+         } else {
            setErro(true);
          }
        } catch (error) {
@@ -75,71 +55,110 @@ const [urlDelete, setUrlDelete] = useState(url);
        }
        setCarregando(false);
      }
-     if (urlDelete!=''){
-      remover();
-     }else{
-      
-     }
-   },[urlDelete]);
-   useEffect(() => { 
-    const refreshPage = ()=>{setRefresh(null)}
-     refreshPage();
-    }, [refresh]);
+     consulta();
+   },[url]);
 
-return (
-  <div onLoad={event=>{
-    setUrl('http://localhost:3000/readReserva/');
-  }}>
-      <form onSubmit={event => {
-        setUrlDelete(`http://localhost:3000/deleteReserva/${Id}/`);
-        event.preventDefault();
-      }}>
+  return (
+<>
 
-    {erro && <div>Não encontramos itens!</div>}
-      {carregando ? (
-        <div>Carregando...</div>
-      ) : (
-      dados && (
-          <div className='table-responsive-sm'>
-          
-            <table  width={'98%'} className='table table-striped table-sm'>
+<div className="container">
+<div className="row">
+
+{(acao=='tabela') &&
+ dados && (
+
+<div>
+  <form onSubmit={event => {
+    setUrl(`http://localhost:3000/readReserva/`);
+    event.preventDefault();
+ }}
+  >
+    <button
+                    className='btn btn-success'
+                    type="submit">
+                    Novo
+                  </button>
+        </form>
+        
+        <div className="col">
+        <div className="card" style={{width: '80%'}}>
+          <div className="card-body">
+            <div className="card-caption">
+    
+    <table  width={'98%'} className='table'>
               <tr>
-                <th>Local</th>
-                <th>Cidade</th>
-                <th>Check-in</th>
-                <th>Check-out</th>
-                <th>Nome</th>
-                <th>Telefone</th>
-                <th>Ação</th>
+                <th scope="col">CheckIn</th>
+                <th scope="col">CheckOut</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Telefone</th>
+                <th scope="col">Ação</th>
               </tr>
 
-              {dados.map((dados: Reserva, dadosCasa: Casa) =>{
-              
-              return(
-                
+              {dados.map((dados: Reserva) =>{
+
+                return(
+                 
                 <tr className='evenRow'>
-                  <td>{dadosCasa.local}</td>
-                  <td>{dadosCasa.cidade}</td>
-                  <td>{dayjs(dados.checkin).format('DD/MM/YYYY')}</td>
-                  <td>{dayjs(dados.checkout).format('DD/MM/YYYY')}</td>
-                  <td>{dados.nome}</td>
-                  <td>{dados.telefone}</td>
-                  <td>
+                  <td scope="row">{dados.checkin}</td>
+                  <td scope="row">{dados.checkout}</td>
+                  <td scope="row">{dados.nome}</td>
+                  <td scope="row">{dados.telefone}</td>
+                  <td scope="row">
+                 {/**<form onSubmit={event => {
+                     
+                      navigate(`/detalhe/${dados._id}`);
+                  }}
+                  style={
+                    { 
+                      float: 'left' , 
+                      display: 'inline-block'
+                    }}> */}
+                  
+                                   
+                  <form onSubmit={event => {
+                      setAcao('tabela')
+                      setUrl(`http://localhost:3000/deleteCasa/${dados._Id}/`);
+                      event.preventDefault();
+                  }}
+                  
+                  style={
+                  { 
+                    float: 'left' , 
+                    display: 'inline-block'
+                  }}
+                   >
+                  
                   <button
-                    onClick={(event=>{setRefresh(null);})}
+                    className='btn btn-danger'
                     type="submit">
                     Excluir
                   </button>
-                 </td>
+                  </form>
+                  </td>
                 </tr>
+                
               )
               })}
+
             </table>
-          </div>
-        )
+             </div>
+             </div>
+             </div>
+             </div>
+             </div>
       )
-    }
-    </form>
-   </div>
-  );
+}
+
+
+
+
+</div>
+    </div>
+
+    </>
+
+
+)
+
+
 }

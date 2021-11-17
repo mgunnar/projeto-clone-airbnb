@@ -60,8 +60,9 @@ export default function PaginaDetalhe() {
        },[url]);
 
     useEffect(() => { 
+      setIdcasa(parseInt(Id));
       async function insert() {
-        setIdcasa(parseInt(Id));
+        
         setErro(false);
         setCarregando(true);
         try {
@@ -201,31 +202,13 @@ export default function PaginaDetalhe() {
              }}
             />
             </p>
-              <p className="card-text">
-               
-              </p>
-              <p className="card-text">
-               
-              </p>
-              <p className="card-text">
-               
-              </p>
+              
               <button
               type="submit">Reservar</button>
               
               </div>
 
               <div>
-
-
-
-
-
-
-             
-
-
-
 
     </div>
               
