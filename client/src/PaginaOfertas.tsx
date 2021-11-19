@@ -4,6 +4,7 @@ import {Casa} from './dtos';
 import { Route,useParams, useNavigate } from 'react-router-dom'
 
 export default function PaginaOfertas() {
+  const imgs: string = "https://imoveisvaledosinos.com.br/wp-content/uploads/mercado-publico.jpg";
   let parametros = useParams();
     let Id = parametros.id!;
     let navigate = useNavigate();
@@ -111,7 +112,7 @@ export default function PaginaOfertas() {
             value="Local" 
             onChange={event => setRadio(event.target.value)}
            />
-           <label className="form-check-label" >Local</label>
+           <label className="form-check-label" >Descrição</label>
           </div>
  
          <div className="form-check form-check-inline">
@@ -221,7 +222,7 @@ export default function PaginaOfertas() {
                         <h5 className="card-title">{dados.local}</h5>
                         <h6 className="card-subtitle mb-2 text-muted">{dados.cidade}</h6>
                         <p className="card-text">
-                          <a href=''><img src={dados.local} width="270px" height="220px" onClick={() => {
+                          <a href=''><img src={imgs} width="270px" height="220px" onClick={() => {
                              navigate(`/detalhe/${dados._id}`);
                           }}/>
                           </a>
